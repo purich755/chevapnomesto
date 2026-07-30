@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Чевапно Место — сербское бистро на живом огне</title>
+<meta name="description" content="Сербское бистро «Чевапно Место»: чевапи, плескавица, заверотоны, питы и чорбы. Готовим на мангале — как готовят на Балканах.">
+<meta name="theme-color" content="#210803">
+<link rel="icon" href="assets/img/el-loc-red.png" type="image/png">
+<link rel="preload" href="assets/fonts/arkhip.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/tiktoksans-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="is-loading">
+
+<!-- ═══════════════ ПРЕЛОАДЕР · «Розжиг» ═══════════════ -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader__media">
+    <video class="preloader__video" id="preloaderVideo" muted playsinline preload="auto"
+           poster="assets/video/intro-poster.jpg">
+      <source src="assets/video/intro.webm" type="video/webm">
+      <source src="assets/video/intro.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="preloader__fallback">
+    <img src="assets/img/logo-main-white.webp" alt="" width="320" height="242">
+  </div>
+</div>
+
+<!-- ═══════════════ СКВОЗНЫЕ ЭЛЕМЕНТЫ ═══════════════ -->
+
+<!-- Рельс с номерами секций — приём из оглавления брендбука -->
+<nav class="rail" id="rail" aria-label="Разделы страницы">
+  <span class="rail__label" id="railLabel">Огонь</span>
+  <ul class="rail__list" id="railList"></ul>
+</nav>
+
+<!-- Индикатор прокрутки: знак пламени заливается красным снизу вверх -->
+<div class="fireprogress" id="fireProgress" aria-hidden="true">
+  <img class="fireprogress__base" src="assets/img/el-loc-white.webp" alt="" width="60" height="76">
+  <span class="fireprogress__fill" id="fireFill">
+    <img src="assets/img/el-loc-red.webp" alt="" width="60" height="76">
+  </span>
+  <span class="fireprogress__num" id="fireNum">0</span>
+</div>
+
+<!-- ═══════════════ ШАПКА ═══════════════ -->
+<header class="header" id="header">
+  <a class="header__logo" href="#top" aria-label="Чевапно Место — на главную">
+    <img src="assets/img/logo-h-white.webp" alt="Чевапно Место, сербское бистро" width="300" height="39">
+  </a>
+  <nav class="header__nav" aria-label="Основная навигация">
+    <a href="#menu">Меню</a>
+    <a href="#lunch">Ланчи</a>
+    <a href="#about">О нас</a>
+    <a href="#delivery">Доставка</a>
+    <a href="#place">Контакты</a>
+  </nav>
+  <a class="btn btn--red header__cta" href="#delivery" data-magnetic>Заказать</a>
+  <button class="header__burger" id="burger" aria-label="Меню" aria-expanded="false">
+    <span></span><span></span>
+  </button>
+</header>
+
+<div class="mobilenav" id="mobilenav" aria-hidden="true">
+  <a href="#menu">Меню</a>
+  <a href="#lunch">Ланчи</a>
+  <a href="#about">О нас</a>
+  <a href="#delivery">Доставка</a>
+  <a href="#place">Контакты</a>
+</div>
+
+<main id="top">
+
+<!-- ═══════════════ 01 · ПЕРВЫЙ ЭКРАН ═══════════════ -->
+<section class="hero" id="hero" data-section="01" data-name="Огонь">
+  <div class="hero__bg" data-parallax="0.28">
+    <img src="assets/img/bg-3.webp" alt="" aria-hidden="true">
+  </div>
+  <div class="hero__grain" aria-hidden="true"></div>
+
+  <div class="hero__inner">
+    <div class="hero__text">
+      <p class="eyebrow reveal-up">Сербское бистро · <span data-city></span></p>
+      <h1 class="hero__title">
+        <span class="line"><span>Сербское</span></span>
+        <span class="line"><span>бистро</span></span>
+        <span class="line"><span>на живом</span></span>
+        <span class="line"><span><em>огне</em></span></span>
+      </h1>
+      <p class="hero__lead reveal-up">Чевапи, плескавица, питы и чорбы.<br>Готовим на мангале — как готовят на Балканах.</p>
+      <div class="hero__actions reveal-up">
+        <a class="btn btn--red" href="#menu" data-magnetic>Смотреть меню</a>
+        <a class="btn btn--ghost" href="#place" data-magnetic>
+          <img class="btn__icon" src="assets/img/el-loc-white.webp" alt="" width="18" height="23">
+          Как нас найти
+        </a>
+      </div>
+    </div>
+
+    <figure class="hero__photo" data-parallax="-0.6">
+      <img src="assets/img/photo-plesk-macro.webp" alt="Плескавица крупным планом со следами решётки гриля" width="1247" height="1870">
+    </figure>
+  </div>
+
+  <div class="hero__foot">
+    <span class="hero__mark"><b>01</b> / Огонь</span>
+    <a class="hero__scroll" href="#about" aria-label="Листать дальше">
+      <span class="hero__scrollline"></span>
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════ ПОЛОСА ОГНЯ ═══════════════ -->
+<div class="marquee-clip" aria-hidden="true">
+  <div class="marquee marquee--tilt">
+    <div class="marquee__track" id="marqueeTop"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 02 · ЧТО ТАКОЕ ЧЕВАПИ ═══════════════ -->
+<section class="about" id="about" data-section="02" data-name="Продукт">
+  <div class="about__inner">
+    <div class="about__text">
+      <p class="eyebrow reveal-up"><b>02</b> / Продукт</p>
+      <h2 class="h-sec reveal-mask">Мясо, огонь<br>и ничего лишнего</h2>
+      <div class="about__body">
+        <p class="reveal-up">Чевапи — маленькие колбаски из рубленого мяса, которые на Балканах жарят на открытых углях и подают в тёплой пите с луком и айваром. Плескавица — их старшая сестра: та же смесь, но раскатанная в широкую котлету, с решёткой от мангала во всю ширину.</p>
+        <p class="reveal-up">Мы не изобретаем сербскую кухню заново. Мы держим мангал горячим, месим балканское тесто каждый день и делаем соусы у себя. Всё остальное — лишнее.</p>
+      </div>
+
+      <ul class="facts">
+        <li class="fact">
+          <img src="assets/img/el-grill-white.webp" alt="" width="40" height="50">
+          <span>100 % мангал</span>
+        </li>
+        <li class="fact">
+          <img src="assets/img/el-grill-white.webp" alt="" width="40" height="50">
+          <span>Балканское тесто</span>
+        </li>
+        <li class="fact">
+          <img src="assets/img/el-grill-white.webp" alt="" width="40" height="50">
+          <span>Соусы своего производства</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="about__media">
+      <!-- Фото сняты на белом — по правилу гайда кладём их на тёмную
+           фирменную подложку с зерном, а не на белый фон -->
+      <figure class="about__photo">
+        <span class="about__glow" aria-hidden="true"></span>
+        <img data-parallax="-0.45" src="assets/img/cut-plesk-three.webp"
+             alt="Три плескавицы со следами решётки гриля" width="1788" height="584">
+      </figure>
+      <img class="about__stamp" id="aboutStamp" src="assets/img/stamp-red.webp" alt="Печать «Чевапно Место»" width="220" height="220">
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 03 · ОГОНЬ · ВКУС · МЕСТО (живые угли) ═══════════════ -->
+<section class="ember" id="fire" data-section="03" data-name="Огонь не гаснет">
+  <div class="ember__track" id="emberTrack">
+    <div class="ember__stage">
+      <!-- Живые угли: искры поднимаются на канвасе, непрерывно -->
+      <canvas class="ember__canvas" id="emberCanvas" aria-hidden="true"></canvas>
+      <img class="ember__flame" src="assets/img/el-fire-red.webp" alt="" aria-hidden="true">
+      <div class="ember__coals" aria-hidden="true"></div>
+      <div class="ember__veil" aria-hidden="true"></div>
+      <div class="ember__words">
+        <h2 class="ember__word is-on" data-word="0">Огонь</h2>
+        <h2 class="ember__word" data-word="1">Вкус</h2>
+        <h2 class="ember__word" data-word="2">Место</h2>
+      </div>
+      <p class="ember__cap"><b>03</b> / Огонь, который не гаснет</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 04 · ВИТРИНА ═══════════════ -->
+<section class="showcase" id="showcase" data-section="04" data-name="Витрина">
+  <div class="showcase__head">
+    <p class="eyebrow"><b>04</b> / Витрина</p>
+    <h2 class="h-sec reveal-mask">Идём вдоль прилавка</h2>
+  </div>
+  <div class="showcase__viewport" id="showcaseViewport">
+    <div class="showcase__track" id="showcaseTrack"></div>
+  </div>
+  <p class="showcase__hint" aria-hidden="true">листайте вниз →</p>
+</section>
+
+<!-- ═══════════════ 05 · МЕНЮ ═══════════════ -->
+<section class="menu" id="menu" data-section="05" data-name="Меню">
+  <div class="menu__bg" aria-hidden="true"><img src="assets/img/bg-2.webp" alt=""></div>
+  <div class="menu__head">
+    <p class="eyebrow"><b>05</b> / Меню</p>
+    <h2 class="h-sec reveal-mask">Всё, что на доске</h2>
+  </div>
+  <div class="menu__body">
+    <div class="menu__tabs" id="menuTabs" role="tablist" aria-label="Категории меню"></div>
+    <div class="menu__panels" id="menuPanels"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ 06 · ЛАНЧИ ═══════════════ -->
+<section class="lunch" id="lunch" data-section="06" data-name="Ланчи">
+  <div class="lunch__head">
+    <p class="eyebrow"><b>06</b> / Ланчи</p>
+    <h2 class="h-sec reveal-mask">Собери свой ланч</h2>
+    <p class="lunch__note" id="lunchNote"></p>
+  </div>
+
+  <div class="lunch__grid">
+    <div class="lunch__steps">
+      <div class="step">
+        <p class="step__label"><b>Шаг 1</b> · Выбери гарнир</p>
+        <div class="sides" id="lunchSides" role="radiogroup" aria-label="Гарнир"></div>
+      </div>
+      <div class="step">
+        <p class="step__label"><b>Шаг 2</b> · Выбери ланч</p>
+        <div class="mains" id="lunchMains" role="radiogroup" aria-label="Ланч"></div>
+      </div>
+    </div>
+
+    <aside class="lunch__total" aria-live="polite">
+      <div class="total">
+        <p class="total__cap">Ваш ланч</p>
+        <p class="total__name" id="totalName">—</p>
+        <p class="total__namesub" id="totalNameSub"></p>
+        <p class="total__side" id="totalSide">гарнир не выбран</p>
+        <p class="total__weight"><span id="totalWeight">0</span> гр</p>
+        <p class="total__price"><span id="totalPrice">0</span> <i>₽</i></p>
+        <p class="total__hint">Демонстрация — заказ не отправляется.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ═══════════════ 07 · УПАКОВКА И ЗАБОТА ═══════════════ -->
+<section class="care" id="care" data-section="07" data-name="Упаковка">
+  <div class="care__bg" aria-hidden="true"><img src="assets/img/bg-9.webp" alt=""></div>
+  <div class="care__head">
+    <p class="eyebrow"><b>07</b> / Носители бренда</p>
+    <h2 class="h-sec reveal-mask">Упаковка и забота</h2>
+  </div>
+
+  <div class="care__grid">
+    <article class="care__card care__card--seal" id="sealCard">
+      <div class="seal" id="seal">
+        <p class="seal__under" aria-hidden="true">Контроль качества</p>
+        <div class="seal__half seal__half--top">
+          <img src="assets/img/sticker-red.webp" alt="Стикер-пломба «Чевапно Место»" width="380" height="394">
+        </div>
+        <div class="seal__half seal__half--bottom" aria-hidden="true">
+          <img src="assets/img/sticker-red.webp" alt="" width="380" height="394">
+        </div>
+      </div>
+      <h3 class="care__title">Стикер на контейнер</h3>
+      <p class="care__text">Стикер стоит ровно в месте открытия контейнера. Цел — значит, до вас его никто не открывал.</p>
+    </article>
+
+    <article class="care__card care__card--paper">
+      <div class="paper" id="paperStamps" aria-hidden="true"></div>
+      <h3 class="care__title">Упаковочная бумага</h3>
+      <p class="care__text">Крафт с паттерном из штампов. Печати — как символ качества продукта.</p>
+    </article>
+
+    <article class="care__card care__card--apron">
+      <div class="apron" aria-hidden="true">
+        <img src="assets/img/el-fire-red.webp" alt="" width="520" height="298">
+      </div>
+      <h3 class="care__title">Фартук и плейсмент</h3>
+      <p class="care__text">Фирменный текстиль на кухне и подложка на поднос: пламя, паттерн, три цвета — и ни одного лишнего.</p>
+    </article>
+
+    <article class="care__card care__card--logos">
+      <div class="logos" id="logoCarousel" aria-hidden="true">
+        <img src="assets/img/logo-main-white.webp" alt="" class="is-on">
+        <img src="assets/img/logo-h-white.webp" alt="">
+        <img src="assets/img/stamp-white.webp" alt="">
+        <img src="assets/img/sticker-white.webp" alt="">
+      </div>
+      <h3 class="care__title">Логотип в деле</h3>
+      <p class="care__text">Основная версия, горизонтальная, штамп и стикер — четыре роли одного знака.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ═══════════════ 08 · ДОСТАВКА ═══════════════ -->
+<section class="delivery" id="delivery" data-section="08" data-name="Доставка">
+  <div class="delivery__bg" aria-hidden="true"><img src="assets/img/bg-5.webp" alt=""></div>
+  <div class="delivery__inner">
+    <div class="delivery__art">
+      <img id="deliveryArt" src="assets/img/el-delivery-red.webp" alt="" width="620" height="447">
+    </div>
+    <div class="delivery__text">
+      <p class="eyebrow"><b>08</b> / Доставка</p>
+      <h2 class="h-sec reveal-mask">Привезём, пока горячее</h2>
+      <p class="delivery__lead reveal-up">Пита не любит ждать. Собираем заказ сразу после того, как мясо сняли с углей, и закрываем контейнер фирменной пломбой.</p>
+      <div class="delivery__links reveal-up" id="deliveryLinks"></div>
+    </div>
+  </div>
+  <ul class="stats" id="deliveryStats"></ul>
+</section>
+
+<!-- ═══════════════ 09 · МЕСТО ═══════════════ -->
+<section class="place" id="place" data-section="09" data-name="Место">
+  <img class="place__pin" src="assets/img/el-loc-red.webp" alt="" width="800" height="1012" aria-hidden="true">
+  <div class="place__head">
+    <p class="eyebrow"><b>09</b> / Место</p>
+    <h2 class="h-sec reveal-mask">Найди нас</h2>
+  </div>
+  <div class="place__grid">
+    <div class="place__info" id="placeInfo"></div>
+    <div class="place__map" id="placeMap">
+      <div class="map" aria-label="Схематичная карта расположения бистро" role="img">
+        <svg class="map__grid" viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g stroke="rgba(255,255,255,.10)" stroke-width="1">
+            <path d="M-40 90 H640 M-40 200 H640 M-40 320 H640"/>
+            <path d="M90 -40 V460 M240 -40 V460 M400 -40 V460 M520 -40 V460"/>
+          </g>
+          <g stroke="rgba(240,62,30,.30)" stroke-width="10" stroke-linecap="round">
+            <path d="M-40 200 H640"/>
+            <path d="M240 -40 V460"/>
+          </g>
+          <g fill="rgba(255,255,255,.045)">
+            <rect x="110" y="110" width="110" height="70" rx="3"/>
+            <rect x="270" y="96" width="105" height="84" rx="3"/>
+            <rect x="420" y="120" width="90" height="60" rx="3"/>
+            <rect x="110" y="230" width="96" height="70" rx="3"/>
+            <rect x="420" y="230" width="120" height="76" rx="3"/>
+          </g>
+        </svg>
+        <!-- Три точки на карте — по числу адресов -->
+        <div class="map__pin map__pin--a">
+          <span class="map__pulse"></span>
+          <img src="assets/img/el-loc-red.webp" alt="" width="46" height="58">
+        </div>
+        <div class="map__pin map__pin--b">
+          <span class="map__pulse"></span>
+          <img src="assets/img/el-loc-red.webp" alt="" width="46" height="58">
+        </div>
+        <div class="map__pin map__pin--c">
+          <span class="map__pulse"></span>
+          <img src="assets/img/el-loc-red.webp" alt="" width="46" height="58">
+        </div>
+        <p class="map__cap" id="mapCap"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════ ФУТЕР ═══════════════ -->
+<footer class="footer">
+  <div class="footer__grain" aria-hidden="true"></div>
+  <div class="footer__top">
+    <nav class="footer__nav" aria-label="Разделы">
+      <a href="#menu">Меню</a>
+      <a href="#lunch">Ланчи</a>
+      <a href="#about">О нас</a>
+    </nav>
+    <div class="footer__logo">
+      <img src="assets/img/logo-main-white.webp" alt="Чевапно Место — сербское бистро" width="360" height="272">
+      <p class="footer__sub">Сербское бистро · <span data-city></span></p>
+    </div>
+    <nav class="footer__nav footer__nav--right" id="footerSocials" aria-label="Соцсети"></nav>
+  </div>
+  <div class="marquee marquee--flat marquee--rev" aria-hidden="true">
+    <div class="marquee__track" id="marqueeBottom"></div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Чевапно Место</span>
+    <span class="footer__demo">Демонстрационный сайт</span>
+  </div>
+</footer>
+
+<script src="js/vendor/gsap.min.js"></script>
+<script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/vendor/SplitText.min.js"></script>
+<script src="js/content.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
