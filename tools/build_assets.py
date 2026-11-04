@@ -285,14 +285,17 @@ def step_photo():
 
 # ─────────────────────────────────────────────  нарезка блюд с меню-бордов
 #
-# Борды — CMYK TIFF 6000 px. Для каждого блюда задан щедрый ROI (только колонка
+# Борды — PNG 4961 px. Для каждого блюда задан щедрый ROI (только колонка
 # с фото, без текста); точная рамка внутри ROI ищется по «текстурности»
 # (фон борда гладкий, еда — нет). Затем кроп расширяется до квадрата и по краям
 # растворяется в прозрачность — карточка на сайте подкладывает фирменное зерно,
 # как требует гайд («изображения на чёрном фоне»).
 
-BOARD1 = '01_ЧИПИ САМАРА_NEW Q.tif'
-BOARD2 = '02_ЧИПИ САМАРА_NEW Q.tif'
+# Актуальное меню (07-10). Папка переопределяется переменной CHEVAPNO_BOARDS.
+BOARDS_SRC = os.environ.get('CHEVAPNO_BOARDS', os.path.join(os.path.expanduser('~'), 'Downloads'))
+BOARD1 = os.path.join(BOARDS_SRC, '01_ChIPI_SAMARA_07-10_4P_1.png')
+BOARD2 = os.path.join(BOARDS_SRC, '02_ChIPI_SAMARA_07-10_4P.png')
+# Пиццы в меню 07-10 нет: она и раньше была на отдельном борде
 BOARD3 = 'Дизайн без названия (33).png'
 
 # ключ -> (борд, x0, y0, x1, y1[, 'fixed'])
@@ -301,63 +304,61 @@ BOARD3 = 'Дизайн без названия (33).png'
 # автопоиск рамки цепляет не то.
 DISHES = {
     # ── борд 1 · бургеры и чевапи-дог
-    'burger-govyadina':   (1, 300, 700, 800, 1090),
-    'burger-classic':     (1, 1670, 700, 2130, 1090),
-    'burger-spicy':       (1, 300, 1150, 800, 1530),
-    'burger-chevapi':     (1, 1670, 1180, 2130, 1570),
-    'burger-trake':       (1, 300, 1600, 800, 1990),
-    'chevapi-dog':        (1, 1706, 1700, 2125, 1980),
-    'burger-mini':        (1, 320, 2060, 780, 2390),
+    'burger-govyadina':   (1, 270, 610, 640, 880),
+    'burger-classic':     (1, 1450, 610, 1810, 880),
+    'burger-spicy':       (1, 270, 1085, 630, 1360),
+    'burger-piletina':    (1, 1450, 1090, 1810, 1360),
+    'burger-mini':        (1, 300, 1620, 600, 1840),
+    'chevapi-dog':        (1, 1425, 1610, 1810, 1870),
     # ── борд 1 · питы
-    'pita-plesk':         (1, 250, 2520, 800, 2900),
-    'pita-beef':          (1, 1800, 2520, 2360, 2900),
-    'pita-piletina':      (1, 272, 3040, 760, 3390),
-    'pita-gambori':       (1, 1800, 2980, 2350, 3410),
-    'pita-chevapi':       (1, 240, 3410, 790, 3820),
-    'pita-egg':           (1, 1810, 3400, 2340, 3810),
+    'pita-plesk':         (1, 240, 2130, 620, 2380),
+    'pita-beef':          (1, 1530, 2135, 1925, 2395),
+    'pita-piletina':      (1, 235, 2590, 615, 2825),
+    'pita-gambori':       (1, 1535, 2565, 1915, 2840),
+    'pita-chevapi':       (1, 235, 3015, 615, 3270),
+    'pita-egg':           (1, 1550, 2995, 1900, 3280),
     # ── борд 1 · заверотоны
-    'zav-classic':        (1, 3190, 150, 3860, 830),
-    'zav-beef':           (1, 4540, 150, 5260, 830),
-    'zav-cheese':         (1, 3190, 800, 3860, 1440),
-    'zav-chevapi':        (1, 4460, 760, 5130, 1420),
-    'zav-gambori':        (1, 3170, 1440, 3850, 2060),
-    'zav-chevapster':     (1, 4450, 1420, 5140, 2030),
+    'zav-classic':        (1, 2695, 165, 3175, 650),
+    'zav-beef':           (1, 3740, 170, 4240, 675),
+    'zav-cheese':         (1, 2695, 680, 3175, 1160),
+    'zav-chevapi':        (1, 3760, 650, 4240, 1145),
+    'zav-gambori':        (1, 2650, 1215, 3165, 1665),
+    'zav-chevapster':     (1, 3735, 1195, 4245, 1650),
     # ── борд 1 · закуски
-    'snack-trake':        (1, 3350, 2160, 3770, 2680),
-    'snack-gambori':      (1, 3370, 2650, 3790, 3140),
-    'snack-nuggets':      (1, 4610, 2010, 5000, 2470),
-    'snack-fries':        (1, 4610, 2470, 5010, 2930),
-    'snack-krompir':      (1, 4610, 2930, 5010, 3380),
+    'snack-trake':        (1, 2820, 1820, 3110, 2200),
+    'snack-gambori':      (1, 2830, 2220, 3120, 2585),
+    'snack-nuggets':      (1, 3875, 1700, 4135, 2040),
+    'snack-fries':        (1, 3870, 2055, 4140, 2410),
+    'snack-krompir':      (1, 3885, 2432, 4135, 2790),
     # ── борд 2 · гарниры
-    'side-krompir':       (2, 640, 450, 1200, 1000),
-    'side-rice':          (2, 1210, 470, 1750, 1010),
-    'side-fries':         (2, 1830, 530, 2320, 1010),
+    'side-krompir':       (2, 565, 385, 965, 785),
+    'side-rice':          (2, 1040, 405, 1425, 795),
+    'side-fries':         (2, 1495, 410, 1880, 795),
     # ── борд 2 · ланчи
-    'lunch-plesk-classic': (2, 220, 1200, 810, 1800),
-    'lunch-plesk-spicy':   (2, 215, 1745, 825, 2360),
-    'lunch-plesk-beef':    (2, 215, 2305, 825, 2935),
-    'lunch-plesk-cheese':  (2, 210, 2850, 830, 3455),
-    'lunch-chevapi':       (2, 205, 3415, 840, 4060),
-    'lunch-steak-beef':    (2, 1760, 1160, 2350, 1800),
-    'lunch-steak-chicken': (2, 1755, 1740, 2340, 2350),
-    'lunch-steak-pork':    (2, 1735, 2290, 2340, 2910),
-    'lunch-kebab-green':   (2, 1730, 2840, 2360, 3460),
-    'lunch-kebab-cheese':  (2, 1730, 3410, 2370, 4045),
-    'lunch-trake':         (2, 3145, 60, 3775, 690),
-    'lunch-piletina':      (2, 4620, 65, 5240, 680),
-    'lunch-kids':          (2, 3140, 750, 3770, 1250),
-    'lunch-breakfast':     (2, 4630, 600, 5275, 1240),
+    'lunch-plesk-classic': (2, 215, 1015, 680, 1455),
+    'lunch-plesk-spicy':   (2, 215, 1475, 660, 1925),
+    'lunch-plesk-beef':    (2, 210, 1940, 665, 2400),
+    'lunch-plesk-cheese':  (2, 210, 2395, 670, 2835),
+    'lunch-chevapi':       (2, 205, 2865, 680, 3335),
+    'lunch-steak-beef':    (2, 1490, 985, 1940, 1455),
+    'lunch-steak-chicken': (2, 1490, 1470, 1925, 1910),
+    'lunch-steak-pork':    (2, 1480, 1925, 1930, 2385),
+    'lunch-kebab-green':   (2, 1470, 2385, 1945, 2840),
+    'lunch-kebab-cheese':  (2, 1470, 2865, 1950, 3330),
+    'lunch-trake':         (2, 2645, 65, 3125, 560),
+    'lunch-kids':          (2, 2645, 610, 3125, 1000),
+    'lunch-breakfast':     (2, 3898, 100, 4345, 548),
     # ── борд 2 · чорбы
-    'chorba-chicken':     (2, 3180, 1550, 3690, 2070),
-    'chorba-meat':        (2, 3175, 2140, 3690, 2660, 'fixed'),
-    'chorba-tomyam-c':    (2, 3120, 2650, 3690, 3220),
-    'chorba-tomyam-s':    (2, 3105, 3200, 3690, 3790),
+    'chorba-chicken':     (2, 2630, 1255, 3050, 1680),
+    'chorba-meat':        (2, 2630, 1740, 3050, 2165),
+    'chorba-tomyam-c':    (2, 2630, 2225, 3050, 2640),
+    'chorba-tomyam-s':    (2, 2620, 2685, 3040, 3105),
     # ── борд 2 · салаты
-    'salad-shopski':      (2, 4515, 1490, 5100, 2070),
-    'salad-fresh':        (2, 4520, 2060, 5100, 2645),
-    'salad-caesar-c':     (2, 4520, 2650, 5090, 3230),
-    'salad-caesar-s':     (2, 4515, 3210, 5090, 3795),
-    # ── борд 3 · пиццы
+    'salad-shopski':      (2, 3795, 1265, 4205, 1670),
+    'salad-fresh':        (2, 3800, 1740, 4210, 2155),
+    'salad-caesar-c':     (2, 3800, 2230, 4205, 2640),
+    'salad-caesar-s':     (2, 3800, 2695, 4205, 3105),
+    # ── отдельный борд · пиццы (в меню 07-10 их нет)
     'pizza-4cheese':      (3, 120, 660, 650, 1175),
     'pizza-ham':          (3, 120, 1180, 670, 1700),
     'pizza-meat':         (3, 100, 1725, 670, 2260),
@@ -370,8 +371,10 @@ _board_cache = {}
 
 def board(n):
     if n not in _board_cache:
-        name = {1: BOARD1, 2: BOARD2, 3: BOARD3}[n]
-        im = Image.open(src(name)).convert('RGB')
+        path = {1: BOARD1, 2: BOARD2, 3: src(BOARD3)}[n]
+        if not os.path.exists(path):
+            raise SystemExit('нет борда: %s' % path)
+        im = Image.open(path).convert('RGB')
         _board_cache[n] = im
         log('загружен борд %d %s' % (n, im.size))
     return _board_cache[n]
@@ -420,6 +423,33 @@ def food_matte(crop):
     return mask
 
 
+def board_matte(roi):
+    """Маска блюда на бордах 07-10. Фон там — горизонтальный градиент от красного
+    к тёмному, поэтому порог по цвету не годится: фон берём по колонкам из верхних
+    и нижних строк ROI и сравниваем с ним. Чёрную посуду добирает текстура."""
+    a = np.asarray(roi).astype(np.float32)
+    g = a.mean(axis=2)
+    k = 5
+    m = ndimage.uniform_filter(g, k)
+    tex = np.sqrt(np.clip(ndimage.uniform_filter(g * g, k) - m * m, 0, None))
+    # фон сверху и снизу считаем отдельно: блюдо может касаться одного из краёв
+    def to_bg(rows):
+        bg = ndimage.median_filter(np.median(rows, axis=0), size=(41, 1), mode='nearest')
+        return np.sqrt(((a - bg[None, :, :]) ** 2).sum(axis=2))
+    dist = np.minimum(to_bg(a[:6]), to_bg(a[-6:]))
+    mask = (tex > 6.5) | (dist > 38)
+    mask = ndimage.binary_closing(mask, np.ones((9, 9)))
+    mask = ndimage.binary_fill_holes(mask)
+    # раскрытие отрывает белые хлопья борда, прилипшие к контуру блюда
+    mask = ndimage.binary_opening(mask, np.ones((9, 9)))
+    lab, n = ndimage.label(mask)
+    if n:
+        sizes = ndimage.sum(mask, lab, range(1, n + 1))
+        mask = lab == (np.argmax(sizes) + 1)
+    # ужимаем контур, чтобы не тащить красную кайму борда
+    return ndimage.binary_erosion(mask, np.ones((5, 5)))
+
+
 def cut_square(crop, mask, out_size=680, fill=0.86):
     """Блюдо по маске, по центру квадрата, с мягкой кромкой."""
     a = (mask.astype(np.float32) * 255).astype(np.uint8)
@@ -434,22 +464,28 @@ def cut_square(crop, mask, out_size=680, fill=0.86):
 
 def step_dishes():
     outdir = os.path.join(IMG, 'dish')
+    for f in os.listdir(outdir):
+        os.remove(os.path.join(outdir, f))
     made = 0
     for key, spec in DISHES.items():
         bn, x0, y0, x1, y1 = spec[:5]
         mode = spec[5] if len(spec) > 5 else 'auto'
         roi = board(bn).crop((x0, y0, x1, y1))
-        bb = tight_box(roi) if mode == 'auto' else (0, 0, roi.size[0], roi.size[1])
-        if bb is None:
-            log('!! пусто:', key)
-            continue
-        pad = round(max(bb[2] - bb[0], bb[3] - bb[1]) * 0.04)
-        cx0 = max(0, bb[0] - pad)
-        cy0 = max(0, bb[1] - pad)
-        cx1 = min(roi.size[0], bb[2] + pad)
-        cy1 = min(roi.size[1], bb[3] + pad)
-        piece = roi.crop((cx0, cy0, cx1, cy1))
-        sq = cut_square(piece, food_matte(piece))
+        if bn in (1, 2):
+            mask = board_matte(roi)
+            ys, xs = np.where(mask)
+            if len(xs) == 0:
+                log('!! пусто:', key)
+                continue
+            box = (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)
+            piece = roi.crop(box)
+            sq = cut_square(piece, mask[box[1]:box[3], box[0]:box[2]])
+        else:
+            bb = tight_box(roi) if mode == 'auto' else (0, 0, roi.size[0], roi.size[1])
+            pad = round(max(bb[2] - bb[0], bb[3] - bb[1]) * 0.04)
+            piece = roi.crop((max(0, bb[0] - pad), max(0, bb[1] - pad),
+                              min(roi.size[0], bb[2] + pad), min(roi.size[1], bb[3] + pad)))
+            sq = cut_square(piece, food_matte(piece))
         sq.save(os.path.join(outdir, key + '.webp'), 'WEBP', quality=86, method=6)
         made += 1
     log('нарезано блюд:', made)

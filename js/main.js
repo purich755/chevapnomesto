@@ -73,6 +73,7 @@
   }
 
   function buildMenu() {
+    $('#menuFoot').textContent = MENU_FOOT;
     $('#menuTabs').innerHTML = MENU.map(
       (c, i) =>
         `<button class="tab${i === 0 ? ' is-on' : ''}" role="tab" aria-selected="${i === 0}"
@@ -106,7 +107,7 @@
           <h3 class="mcard__name">${pepper(it.hot)}${it.name}</h3>
           ${it.sub ? `<p class="mcard__sub">${it.sub}</p>` : ''}
           <p class="mcard__nums">${priceMarkup(it)}</p>
-          <p class="mcard__d">${it.d}</p>
+          ${it.d ? `<p class="mcard__d">${it.d}</p>` : ''}
         </article>`
         )
         .join('');
@@ -244,7 +245,7 @@
       const s = LUNCH_SIDES[side];
       elName.textContent = m.name;
       elNameSub.textContent = m.sub || '';
-      elSide.textContent = `Гарнир: ${s.name}, ${s.sub}`;
+      elSide.textContent = `Гарнир: ${s.name}, ${s.sub} · Соус: ${m.sauce}`;
       if (REDUCED) {
         elW.textContent = m.w;
         elP.textContent = num(m.p);
