@@ -15,16 +15,29 @@
 
 <!-- ═══════════════ ПРЕЛОАДЕР · «Розжиг» ═══════════════ -->
 <div class="preloader" id="preloader" aria-hidden="true">
-  <div class="preloader__media">
-    <video class="preloader__video" id="preloaderVideo" muted playsinline preload="auto"
-           poster="assets/video/intro-poster.jpg">
-      <source src="assets/video/intro.webm" type="video/webm">
-      <source src="assets/video/intro.mp4" type="video/mp4">
-    </video>
+  <!-- две половины экрана: в конце расходятся по фирменной диагонали -->
+  <div class="pl__half pl__half--top"></div>
+  <div class="pl__half pl__half--bottom"></div>
+  <canvas class="pl__embers" id="plEmbers"></canvas>
+  <div class="pl__glow" id="plGlow"></div>
+
+  <p class="pl__top"><span>Сербское бистро</span><span>Самара</span></p>
+
+  <div class="pl__stage">
+    <!-- знак пламени заливается красным снизу вверх по мере загрузки -->
+    <div class="pl__mark" id="plMark">
+      <img class="pl__mark-base" src="assets/img/el-loc-white.webp" alt="" width="120" height="152">
+      <span class="pl__mark-fill" id="plFill"><img src="assets/img/el-loc-red.webp" alt="" width="120" height="152"></span>
+    </div>
+    <img class="pl__logo" id="plLogo" src="assets/img/logo-main-white.webp" alt="" width="340" height="256">
   </div>
-  <div class="preloader__fallback">
-    <img src="assets/img/logo-main-white.webp" alt="" width="320" height="242">
+
+  <div class="pl__foot">
+    <p class="pl__count"><span id="plNum">0</span><i>%</i></p>
+    <p class="pl__cap" id="plCap">Разжигаем угли</p>
   </div>
+
+  <span class="pl__cut" id="plCut"></span>
 </div>
 
 <!-- ═══════════════ СКВОЗНЫЕ ЭЛЕМЕНТЫ ═══════════════ -->

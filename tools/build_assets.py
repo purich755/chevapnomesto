@@ -3,18 +3,17 @@
 Подготовка ассетов для сайта «Чевапно Место».
 
 Источник  — папка «Элементы к сайту» из поставки клиента.
-Результат — assets/img, assets/video, assets/fonts.
+Результат — assets/img, assets/fonts.
 
 Запуск:  python tools/build_assets.py           (всё)
          python tools/build_assets.py fonts bg  (только выбранные шаги)
 
-Шаги: fonts, bg, logo, elem, photo, dishes, video, frames
+Шаги: fonts, bg, logo, elem, photo, dishes, contact
 
-Требуется: pillow, numpy, scipy, fonttools[woff], ffmpeg в PATH.
+Требуется: pillow, numpy, scipy, fonttools[woff].
 """
 import os
 import sys
-import subprocess
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
@@ -28,14 +27,13 @@ SRC = os.environ.get(
     r'G:\Чевапно место пос материалы\Элементы к сайту',
 )
 IMG = os.path.join(ROOT, 'assets', 'img')
-VID = os.path.join(ROOT, 'assets', 'video')
 FNT = os.path.join(ROOT, 'assets', 'fonts')
 
 DARK = (33, 8, 3)
 
 
 def ensure_dirs():
-    for d in (IMG, VID, FNT, os.path.join(IMG, 'dish')):
+    for d in (IMG, FNT, os.path.join(IMG, 'dish')):
         os.makedirs(d, exist_ok=True)
 
 
@@ -447,49 +445,6 @@ def step_contact():
     log('контрольный лист:', p)
 
 
-# ─────────────────────────────────────────────  видео
-
-def run(cmd):
-    r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace')
-    if r.returncode != 0:
-        print(r.stderr[-3000:])
-        raise SystemExit('ffmpeg упал: %s' % ' '.join(cmd[:6]))
-
-
-VIDEO = 'анимация 1.mp4'
-
-
-def step_video():
-    """Исходник в HEVC — Chrome/Firefox его не проиграют. Перекодируем."""
-    s = src(VIDEO)
-    mp4 = os.path.join(VID, 'intro.mp4')
-    webm = os.path.join(VID, 'intro.webm')
-    poster = os.path.join(VID, 'intro-poster.jpg')
-
-    run(['ffmpeg', '-y', '-v', 'error', '-i', s,
-         '-an', '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
-         '-crf', '22', '-preset', 'slow',
-         '-g', '15', '-keyint_min', '15', '-sc_threshold', '0',
-         '-movflags', '+faststart', mp4])
-    run(['ffmpeg', '-y', '-v', 'error', '-i', s,
-         '-an', '-c:v', 'libvpx-vp9', '-crf', '34', '-b:v', '0',
-         '-row-mt', '1', '-deadline', 'good', '-cpu-used', '2', '-g', '15', webm])
-    run(['ffmpeg', '-y', '-v', 'error', '-i', s, '-vf', 'select=eq(n\\,95)',
-         '-frames:v', '1', '-q:v', '3', poster])
-    for p in (mp4, webm, poster):
-        log(os.path.basename(p), os.path.getsize(p) // 1024, 'КБ')
-
-    # Ролик нужен только прелоадеру. Секция 03 теперь — процедурные искры
-    # на канвасе (см. initEmber в js/main.js), покадровая секвенция больше
-    # не нужна, поэтому старую папку с кадрами подчищаем.
-    frames_dir = os.path.join(VID, 'frames')
-    if os.path.isdir(frames_dir):
-        for f in os.listdir(frames_dir):
-            os.remove(os.path.join(frames_dir, f))
-        os.rmdir(frames_dir)
-        log('удалена неиспользуемая папка frames/')
-
-
 STEPS = {
     'fonts': step_fonts,
     'bg': step_bg,
@@ -498,7 +453,6 @@ STEPS = {
     'photo': step_photo,
     'dishes': step_dishes,
     'contact': step_contact,
-    'video': step_video,
 }
 
 if __name__ == '__main__':

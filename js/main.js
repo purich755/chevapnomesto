@@ -691,54 +691,181 @@
 
   /* ───────────────────────────────────── 6. Прелоадер */
 
+  // «Розжиг»: искры, знак пламени заливается красным по мере загрузки,
+  // затем проявляется логотип, по фирменной диагонали проходит красный рез
+  // и экран расходится на две половины, открывая первый экран.
   function initPreloader(onDone) {
     const pre = $('#preloader');
-    const video = $('#preloaderVideo');
+    const fill = $('#plFill');
+    const numEl = $('#plNum');
+    const cap = $('#plCap');
+    const glow = $('#plGlow');
+    const cut = $('#plCut');
+    const header = $('#header');
+
+    // В рамках одной вкладки второй раз полную заставку не показываем
+    let seen = false;
+    try { seen = sessionStorage.getItem('chevapno-intro') === '1'; sessionStorage.setItem('chevapno-intro', '1'); } catch (e) {}
+    const MIN = seen ? 650 : 1900;         // минимальная длительность, мс
+    const STEPS = [[0, 'Разжигаем угли'], [34, 'Жарим плескавицу'], [68, 'Печём питу'], [100, 'Готово']];
+
+    // Угол реза — ровно по линии, разделяющей половины: (0, 56%) → (100%, 44%)
+    const setAngle = () => {
+      const a = (-Math.atan2(innerHeight * .12, innerWidth) * 180) / Math.PI;
+      gsap.set(cut, { rotation: a, scaleX: 0 });
+    };
+    setAngle();
+    addEventListener('resize', setAngle);
+
+    // ── Искры (свой лёгкий цикл; останавливается, когда заставка ушла)
+    const canvas = $('#plEmbers');
+    const ctx = canvas.getContext('2d');
+    let W = 1, H = 1, dpr = 1, raf = 0, heat = .3;
+    const size = () => {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      W = canvas.width = Math.max(1, Math.round(innerWidth * dpr));
+      H = canvas.height = Math.max(1, Math.round(innerHeight * dpr));
+    };
+    size();
+    addEventListener('resize', size);
+    const sprite = (rgb) => {
+      const s = document.createElement('canvas');
+      s.width = s.height = 48;
+      const g = s.getContext('2d');
+      const r = g.createRadialGradient(24, 24, 0, 24, 24, 24);
+      r.addColorStop(0, `rgba(${rgb},1)`);
+      r.addColorStop(.35, `rgba(${rgb},.5)`);
+      r.addColorStop(1, `rgba(${rgb},0)`);
+      g.fillStyle = r;
+      g.fillRect(0, 0, 48, 48);
+      return s;
+    };
+    const sR = sprite('240,62,30');
+    const sW = sprite('255,255,255');
+    const P = [];
+    const spawn = (p, seed) => Object.assign(p, {
+      x: W * (.15 + Math.random() * .7) + (Math.random() - .5) * W * .3,
+      y: seed ? Math.random() * H : H + Math.random() * 40 * dpr,
+      vx: (Math.random() - .5) * .4 * dpr,
+      vy: -(.6 + Math.random() * 1.6) * dpr,
+      r: (.6 + Math.random() * 2.2) * dpr,
+      t: seed ? Math.random() : 0,
+      life: .9 + Math.random() * 1.4,
+      w: Math.random() * 6.28,
+      white: Math.random() < .18,
+    });
+    for (let i = 0; i < (COARSE ? 70 : 130); i++) P.push(spawn({}, true));
+    let last = performance.now();
+    const tick = () => {
+      const now = performance.now();
+      const dt = Math.min(.05, (now - last) / 1000);
+      last = now;
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+      for (const p of P) {
+        p.t += dt / p.life;
+        if (p.t >= 1) { spawn(p, false); continue; }
+        p.w += dt * 3;
+        const sp = (.6 + heat) * 60 * dt;
+        p.x += (p.vx + Math.sin(p.w) * .4 * dpr) * sp;
+        p.y += p.vy * sp;
+        const d = p.r * (1.7 - p.t) * 6;
+        ctx.globalAlpha = Math.sin(p.t * Math.PI) * (.35 + heat * .6);
+        ctx.drawImage(p.white ? sW : sR, p.x - d / 2, p.y - d / 2, d, d);
+      }
+      ctx.globalAlpha = 1;
+      raf = requestAnimationFrame(tick);
+    };
+    if (!REDUCED) raf = requestAnimationFrame(tick);
+
+    // ── Прогресс: время + реальная готовность шрифтов и первого экрана
+    let ready = false;
+    const gates = [document.fonts ? document.fonts.ready : Promise.resolve()];
+    $$('.hero img').forEach((img) => {
+      if (!img.complete) gates.push(new Promise((r) => { img.addEventListener('load', r, { once: true }); img.addEventListener('error', r, { once: true }); }));
+    });
+    Promise.all(gates).then(() => { ready = true; });
+
+    const t0 = performance.now();
+    const state = { p: 0 };
     let finished = false;
+    let step = 0;
 
-    const reveal = () => {
-      if (finished) return;
-      finished = true;
-      document.body.classList.remove('is-loading');
-
-      const tl = gsap.timeline({
-        onComplete: () => { pre.classList.add('is-done'); pre.style.display = 'none'; onDone(); },
-      });
-
-      // Шапку выводим CSS-переходом, а не тайфлайном: так её положение
-      // не зависит от того, чем закончится анимация прелоадера
-      const header = $('#header');
-      setTimeout(() => header.classList.add('is-in'), REDUCED ? 0 : 380);
-
-      if (REDUCED) {
-        tl.to(pre, { opacity: 0, duration: .35 });
-      } else {
-        // Пламя расходится наружу — и этим же движением открывается первый экран
-        pre.classList.add('is-opening');
-        tl.to('.preloader__video, .preloader__fallback', {
-            scale: 1.55, opacity: 0, duration: 1, ease: 'power2.in', transformOrigin: '50% 50%',
-          })
-          .to(pre, { opacity: 0, duration: .72, ease: 'power2.inOut' }, .22)
-          .from('.hero__title .line > span', { yPercent: 108, duration: .9, ease: EASE, stagger: .08 }, .3)
-          .from('.hero__photo', { opacity: 0, scale: 1.06, duration: 1.1, ease: EASE }, .3)
-          .from('.hero__foot', { opacity: 0, duration: .7, ease: EASE }, .75);
+    const render = () => {
+      const p = state.p;
+      fill.style.clipPath = `inset(${100 - p}% 0 0 0)`;
+      numEl.textContent = Math.round(p);
+      glow.style.opacity = .25 + p / 100 * .75;
+      heat = .3 + p / 100 * .9;
+      while (step < STEPS.length - 1 && p >= STEPS[step + 1][0]) {
+        step++;
+        cap.textContent = STEPS[step][1];
       }
     };
 
-    if (REDUCED) { setTimeout(reveal, 260); return; }
-
-    // Ролик 7 с — ускоряем до ~2.6 с, как просит ритм прелоадера
-    const play = () => {
-      video.playbackRate = 2.6;
-      const p = video.play();
-      if (p && p.catch) p.catch(() => { pre.classList.add('no-video'); setTimeout(reveal, 1400); });
+    // Число бежит к цели плавно; цель — доля прошедшего минимального времени,
+    // а последние проценты ждут реальной готовности страницы
+    const progress = () => {
+      if (finished) return;
+      const byTime = Math.min(1, (performance.now() - t0) / MIN) * 100;
+      const target = ready ? byTime : Math.min(byTime, 92);
+      state.p += (target - state.p) * .12;
+      if (target >= 100 && state.p > 99.4) state.p = 100;
+      render();
+      if (state.p >= 100) { finish(); return; }
+      requestAnimationFrame(progress);
     };
-    video.addEventListener('loadeddata', play, { once: true });
-    video.addEventListener('ended', reveal, { once: true });
-    video.addEventListener('error', () => { pre.classList.add('no-video'); setTimeout(reveal, 1400); }, { once: true });
-    if (video.readyState >= 2) play();
+
+    const reveal = () => {
+      document.body.classList.remove('is-loading');
+      setTimeout(() => header.classList.add('is-in'), REDUCED ? 0 : 500);
+    };
+
+    const done = () => {
+      cancelAnimationFrame(raf);
+      removeEventListener('resize', size);
+      removeEventListener('resize', setAngle);
+      pre.style.display = 'none';
+      onDone();
+    };
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      pre.classList.add('is-opening');
+
+      if (REDUCED) {
+        reveal();
+        gsap.to(pre, { opacity: 0, duration: .35, onComplete: done });
+        return;
+      }
+
+      const tl = gsap.timeline({ onComplete: done });
+      if (!seen) {
+        // знак пламени уступает место полному логотипу
+        tl.to('#plMark', { scale: .82, opacity: 0, duration: .35, ease: 'power2.in' })
+          .fromTo('#plLogo', { opacity: 0, y: 14, clipPath: 'inset(100% 0 0 0)' },
+            { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: .6, ease: EASE }, .18)
+          .to('#plLogo', { opacity: 0, y: -10, duration: .28, ease: 'power2.in' }, 1);
+      }
+      tl.to('#plMark, .pl__foot, .pl__top, #plGlow, #plEmbers', { opacity: 0, duration: .28, ease: 'power2.in' }, seen ? 0 : '<')
+        // красный рез по диагонали…
+        .to(cut, { scaleX: 1, duration: .4, ease: 'power3.inOut' }, '>-.05')
+        .add(reveal)
+        // …и экран расходится на две половины
+        .to('.pl__half--top', { yPercent: -62, duration: .9, ease: 'expo.inOut' }, '>-.02')
+        .to('.pl__half--bottom', { yPercent: 62, duration: .9, ease: 'expo.inOut' }, '<')
+        .to(cut, { opacity: 0, scaleY: 6, duration: .5, ease: 'power2.out' }, '<.1')
+        .from('.hero__title .line > span', { yPercent: 108, duration: .9, ease: EASE, stagger: .08 }, '<.25')
+        .from('.hero__photo', { opacity: 0, scale: 1.06, duration: 1.1, ease: EASE }, '<')
+        .from('.hero__foot', { opacity: 0, duration: .7, ease: EASE }, '<.4');
+    }
+
+    if (REDUCED) { state.p = 100; render(); setTimeout(finish, 300); return; }
+    requestAnimationFrame(progress);
     // Страховка: что бы ни случилось, экран не должен залипнуть
-    setTimeout(reveal, 4200);
+    setTimeout(() => { ready = true; }, 5000);
   }
 
   /* ───────────────────────────────────── Старт */
