@@ -220,7 +220,6 @@ PHOTOS = {
     '73.jpg': ('photo-lunch-top', 2000),        # ланч сверху
     '78-1.jpg': ('photo-burger', 2000),         # бургер целиком
     '83.jpg': ('photo-burger-macro', 2000),     # макро бургера
-    '182.jpg': ('photo-pizza', 2000),           # пицца 4 сыра
     'Generated_Image_November_20_2025_-_4_20PM.png': ('photo-chevapdog', 1400),
 }
 
@@ -286,22 +285,16 @@ def step_photo():
 # ─────────────────────────────────────────────  нарезка блюд с меню-бордов
 #
 # Борды — PNG 4961 px. Для каждого блюда задан щедрый ROI (только колонка
-# с фото, без текста); точная рамка внутри ROI ищется по «текстурности»
-# (фон борда гладкий, еда — нет). Затем кроп расширяется до квадрата и по краям
-# растворяется в прозрачность — карточка на сайте подкладывает фирменное зерно,
-# как требует гайд («изображения на чёрном фоне»).
+# с фото, без текста); внутри него строится маска блюда (фон борда гладкий,
+# еда — нет), блюдо вырезается в прозрачность — карточка на сайте подкладывает
+# фирменное зерно, как требует гайд («изображения на чёрном фоне»).
 
 # Актуальное меню (07-10). Папка переопределяется переменной CHEVAPNO_BOARDS.
 BOARDS_SRC = os.environ.get('CHEVAPNO_BOARDS', os.path.join(os.path.expanduser('~'), 'Downloads'))
 BOARD1 = os.path.join(BOARDS_SRC, '01_ChIPI_SAMARA_07-10_4P_1.png')
 BOARD2 = os.path.join(BOARDS_SRC, '02_ChIPI_SAMARA_07-10_4P.png')
-# Пиццы в меню 07-10 нет: она и раньше была на отдельном борде
-BOARD3 = 'Дизайн без названия (33).png'
 
-# ключ -> (борд, x0, y0, x1, y1[, 'fixed'])
-# 'fixed' — брать ROI как есть: там, где посуда чёрная на чёрном фоне борда
-# (мясная чорба) или блюдо лежит на фирменном пламени (нижние пиццы),
-# автопоиск рамки цепляет не то.
+# ключ -> (борд, x0, y0, x1, y1)
 DISHES = {
     # ── борд 1 · бургеры и чевапи-дог
     'burger-govyadina':   (1, 270, 610, 640, 880),
@@ -358,12 +351,6 @@ DISHES = {
     'salad-fresh':        (2, 3800, 1740, 4210, 2155),
     'salad-caesar-c':     (2, 3800, 2230, 4205, 2640),
     'salad-caesar-s':     (2, 3800, 2695, 4205, 3105),
-    # ── отдельный борд · пиццы (в меню 07-10 их нет)
-    'pizza-4cheese':      (3, 120, 660, 650, 1175),
-    'pizza-ham':          (3, 120, 1180, 670, 1700),
-    'pizza-meat':         (3, 100, 1725, 670, 2260),
-    'pizza-pepperoni':    (3, 95, 2285, 615, 2805, 'fixed'),
-    'pizza-chicken':      (3, 110, 2830, 615, 3350, 'fixed'),
 }
 
 _board_cache = {}
@@ -371,56 +358,13 @@ _board_cache = {}
 
 def board(n):
     if n not in _board_cache:
-        path = {1: BOARD1, 2: BOARD2, 3: src(BOARD3)}[n]
+        path = {1: BOARD1, 2: BOARD2}[n]
         if not os.path.exists(path):
             raise SystemExit('нет борда: %s' % path)
         im = Image.open(path).convert('RGB')
         _board_cache[n] = im
         log('загружен борд %d %s' % (n, im.size))
     return _board_cache[n]
-
-
-def tight_box(crop):
-    """Плотная рамка предмета внутри ROI: фон борда гладкий, еда — текстурная."""
-    a = np.asarray(crop).astype(np.float32)
-    g = a.mean(axis=2)
-    k = 5
-    m = ndimage.uniform_filter(g, k)
-    tex = np.sqrt(np.clip(ndimage.uniform_filter(g * g, k) - m * m, 0, None))
-    notbg = (a[..., 1] > 70) | (a[..., 2] > 70)
-    mask = (tex > 9) | notbg
-    mask = ndimage.binary_closing(mask, np.ones((9, 9)))
-    mask = ndimage.binary_fill_holes(mask)
-    lab, n = ndimage.label(mask)
-    if n == 0:
-        return None
-    sizes = ndimage.sum(mask, lab, range(1, n + 1))
-    keep = np.argmax(sizes) + 1
-    ys, xs = np.where(lab == keep)
-    return xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
-
-
-def food_matte(crop):
-    """Альфа-маска самого блюда: фон борда гладкий, еда — нет.
-    Так блюдо ложится на фирменную тёмную подложку сайта без «коробки»
-    из куска борда — ровно то, чего требует гайд («изображения на чёрном»)."""
-    a = np.asarray(crop).astype(np.float32)
-    g = a.mean(axis=2)
-    k = 5
-    m = ndimage.uniform_filter(g, k)
-    tex = np.sqrt(np.clip(ndimage.uniform_filter(g * g, k) - m * m, 0, None))
-    notbg = (a[..., 1] > 62) | (a[..., 2] > 62)
-    mask = (tex > 6.5) | notbg
-    mask = ndimage.binary_closing(mask, np.ones((11, 11)))
-    mask = ndimage.binary_fill_holes(mask)
-    lab, n = ndimage.label(mask)
-    if n:
-        sizes = ndimage.sum(mask, lab, range(1, n + 1))
-        mask = lab == (np.argmax(sizes) + 1)
-        mask = ndimage.binary_fill_holes(mask)
-    # чуть ужимаем, чтобы не тащить кайму фона борда по контуру
-    mask = ndimage.binary_erosion(mask, np.ones((3, 3)))
-    return mask
 
 
 def board_matte(roi):
@@ -468,24 +412,16 @@ def step_dishes():
         os.remove(os.path.join(outdir, f))
     made = 0
     for key, spec in DISHES.items():
-        bn, x0, y0, x1, y1 = spec[:5]
-        mode = spec[5] if len(spec) > 5 else 'auto'
+        bn, x0, y0, x1, y1 = spec
         roi = board(bn).crop((x0, y0, x1, y1))
-        if bn in (1, 2):
-            mask = board_matte(roi)
-            ys, xs = np.where(mask)
-            if len(xs) == 0:
-                log('!! пусто:', key)
-                continue
-            box = (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)
-            piece = roi.crop(box)
-            sq = cut_square(piece, mask[box[1]:box[3], box[0]:box[2]])
-        else:
-            bb = tight_box(roi) if mode == 'auto' else (0, 0, roi.size[0], roi.size[1])
-            pad = round(max(bb[2] - bb[0], bb[3] - bb[1]) * 0.04)
-            piece = roi.crop((max(0, bb[0] - pad), max(0, bb[1] - pad),
-                              min(roi.size[0], bb[2] + pad), min(roi.size[1], bb[3] + pad)))
-            sq = cut_square(piece, food_matte(piece))
+        mask = board_matte(roi)
+        ys, xs = np.where(mask)
+        if len(xs) == 0:
+            log('!! пусто:', key)
+            continue
+        box = (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)
+        piece = roi.crop(box)
+        sq = cut_square(piece, mask[box[1]:box[3], box[0]:box[2]])
         sq.save(os.path.join(outdir, key + '.webp'), 'WEBP', quality=86, method=6)
         made += 1
     log('нарезано блюд:', made)

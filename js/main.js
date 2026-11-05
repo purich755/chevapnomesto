@@ -65,12 +65,17 @@
   }
 
   function priceMarkup(it) {
-    if (it.p2) {
-      return `<span class="mcard__p"><small>25 см</small>${it.p2[0]} ₽</span>
-              <span class="mcard__p"><small>30 см</small>${it.p2[1]} ₽</span>`;
-    }
+    if (it.opts) return `<span class="mcard__w">от</span><span class="mcard__p">${num(it.p)} ₽</span>`;
     return `<span class="mcard__w">${it.w} гр</span><span class="mcard__p">${num(it.p)} ₽</span>`;
   }
+
+  // Варианты одной позиции: «3 шт · 100 гр — 180 ₽»
+  const optsMarkup = (it) =>
+    it.opts
+      ? `<ul class="mcard__opts">${it.opts
+          .map(([l, w, p, hot]) => `<li>${pepper(hot)}${l ? `${l} · ` : ''}${w} гр <b>${num(p)} ₽</b></li>`)
+          .join('')}</ul>`
+      : '';
 
   function buildMenu() {
     $('#menuFoot').textContent = MENU_FOOT;
@@ -107,6 +112,7 @@
           <h3 class="mcard__name">${pepper(it.hot)}${it.name}</h3>
           ${it.sub ? `<p class="mcard__sub">${it.sub}</p>` : ''}
           <p class="mcard__nums">${priceMarkup(it)}</p>
+          ${optsMarkup(it)}
           ${it.d ? `<p class="mcard__d">${it.d}</p>` : ''}
         </article>`
         )

@@ -726,10 +726,16 @@ h1, h2, h3, .arkhip {
   position: absolute; inset: 0;
   background: linear-gradient(180deg, var(--dark) 0%, rgba(33,8,3,.72) 40%, var(--dark) 100%);
 }
-.menu__head, .menu__body, .menu__foot { position: relative; z-index: 1; max-width: var(--maxw); margin: 0 auto; }
-.menu__foot {
+.menu__head, .menu__body, .menu__bottom { position: relative; z-index: 1; max-width: var(--maxw); margin: 0 auto; }
+.menu__bottom {
   margin-top: clamp(24px, 3vw, 44px);
-  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+}
+.menu__foot {
   font-family: 'Arkhip', sans-serif;
   text-transform: uppercase;
   letter-spacing: -.05em;
@@ -811,6 +817,9 @@ h1, h2, h3, .arkhip {
 .mcard__p { font-size: clamp(1.2rem, 1.62vw, 1.68rem); color: var(--red); margin-left: auto; }
 .mcard__p small { font-size: .52em; color: var(--w-45); letter-spacing: .06em; margin-right: .25em; }
 .mcard__d { font-size: var(--fs-small); color: var(--w-45); line-height: 1.5; margin-top: auto; }
+.mcard__opts { display: grid; gap: .35em; margin-bottom: .9em; font-size: var(--fs-small); color: var(--w-64); }
+.mcard__opts li { display: flex; align-items: baseline; gap: .4em; border-bottom: 1px dotted var(--w-16); padding-bottom: .35em; }
+.mcard__opts b { margin-left: auto; font-family: 'Arkhip', sans-serif; font-weight: 400; color: var(--red); letter-spacing: -.04em; }
 
 /* «Добавь по вкусу» — типографский список без фото */
 .plainlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0 clamp(28px, 4vw, 70px); }

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Меню — Чевапно Место, сербское бистро</title>
+<meta name="description" content="Меню сербского бистро «Чевапно Место»: бургеры с плескавицей, заверотоны, питы, ланчи с гарниром, чорбы, салаты и закуски. Цены и граммовки.">
+<meta name="theme-color" content="#210803">
+<link rel="icon" href="assets/img/el-loc-red.png" type="image/png">
+<link rel="preload" href="assets/fonts/arkhip.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/tiktoksans-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+
+<a class="skip" href="#menuList">К меню</a>
+
+<!-- ═══════════════ ШАПКА ═══════════════ -->
+<header class="mh">
+  <a class="mh__logo" href="index.html" aria-label="Чевапно Место — на главную">
+    <img src="assets/img/logo-h-white.webp" alt="Чевапно Место" width="300" height="39">
+  </a>
+  <nav class="mh__nav" aria-label="Навигация">
+    <a class="mh__back" href="index.html"><span aria-hidden="true">←</span> На главную</a>
+    <a class="pill pill--red mh__order" href="#order">Заказать</a>
+  </nav>
+</header>
+
+<!-- ═══════════════ ШАПКА МЕНЮ ═══════════════ -->
+<section class="mhero">
+  <div class="mhero__bg" aria-hidden="true"><img src="assets/img/bg-3.webp" alt=""></div>
+  <div class="mhero__inner">
+    <p class="eyebrow">Сербское бистро · <span data-city></span></p>
+    <h1 class="h">Меню</h1>
+    <ul class="mhero__stats" id="stats"></ul>
+    <label class="search" for="q">
+      <span class="search__label">Найти блюдо</span>
+      <input class="search__input" id="q" type="search" placeholder="плескавица, чорба, сырный…"
+             autocomplete="off" enterkeyhint="search">
+      <button class="search__clear" type="button" id="qClear" aria-label="Очистить поиск" hidden>×</button>
+    </label>
+    <div class="mhero__dish" aria-hidden="true">
+      <img src="assets/img/dish/burger-govyadina.webp" alt="" width="680" height="680" fetchpriority="low">
+    </div>
+    <p class="mhero__note">Цены в рублях, вес — в граммах. <img src="assets/img/el-pepper-red.webp" alt="" width="14" height="14"> — острое.</p>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"><div class="band__track" id="band"></div></div>
+
+<!-- ═══════════════ РАЗДЕЛЫ (липкая панель) ═══════════════ -->
+<nav class="cats" id="cats" aria-label="Разделы меню">
+  <div class="cats__scroll" id="catsScroll"></div>
+</nav>
+
+<main class="mlist" id="menuList">
+  <p class="empty" id="empty" hidden>
+    Ничего не нашли по запросу «<span id="emptyQ"></span>».
+    <button class="pill pill--ghost" type="button" id="emptyReset">Показать всё меню</button>
+  </p>
+  <div id="sections"></div>
+</main>
+
+<!-- ═══════════════ ЗАКАЗ ═══════════════ -->
+<section class="order" id="order">
+  <div class="order__inner">
+    <p class="eyebrow">Доставка и самовывоз</p>
+    <h2 class="h">Заказать домой</h2>
+    <p class="order__lead">Собираем сразу после того, как мясо сняли с углей, и закрываем контейнер фирменной пломбой.</p>
+    <div class="order__links" id="orderLinks"></div>
+    <div class="order__addr">
+      <p class="order__cap" id="addrCap">Адреса</p>
+      <ul id="addrList"></ul>
+    </div>
+  </div>
+</section>
+
+<footer class="mf">
+  <img src="assets/img/logo-main-white.webp" alt="Чевапно Место — сербское бистро" width="180" height="136">
+  <p><a href="index.html">На главную</a> · © 2026 Чевапно Место</p>
+</footer>
+
+<a class="pill pill--red fab is-off" id="fab" href="#order">Заказать</a>
+
+<!-- ═══════════════ КАРТОЧКА БЛЮДА ═══════════════ -->
+<dialog class="sheet" id="sheet" aria-labelledby="sheetName">
+  <div class="sheet__panel" id="sheetPanel">
+    <span class="sheet__grip" aria-hidden="true"></span>
+    <button class="sheet__close" type="button" id="sheetClose" aria-label="Закрыть">×</button>
+    <div class="sheet__media"><img id="sheetImg" src="" alt="" width="680" height="680"></div>
+    <div class="sheet__info">
+      <p class="eyebrow" id="sheetCat"></p>
+      <h2 class="sheet__name" id="sheetName"></h2>
+      <p class="sheet__sub" id="sheetSub"></p>
+      <div id="sheetPrice"></div>
+      <div id="sheetBody"></div>
+      <div class="sheet__order" id="sheetOrder"></div>
+      <div class="sheet__nav">
+        <button class="pill pill--ghost" type="button" id="sheetPrev" aria-label="Предыдущее блюдо">←</button>
+        <span id="sheetCount"></span>
+        <button class="pill pill--ghost" type="button" id="sheetNext" aria-label="Следующее блюдо">→</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script src="js/content.js"></script>
+<script src="js/menu.js"></script>
+</body>
+</html>
