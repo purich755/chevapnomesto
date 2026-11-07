@@ -179,6 +179,13 @@
         <p class="infoblock__cap">Адреса · ${n} ${n === 1 ? 'точка' : 'точки'} в городе</p>
         ${addrs}
       </div>
+      ${CONTACTS.branch ? `
+      <div class="infoblock">
+        <p class="infoblock__cap">${CONTACTS.city}, ${CONTACTS.branch.address}</p>
+        <p class="infoblock__note">${CONTACTS.branch.note}. ${CONTACTS.branch.phoneLabel}:
+          <a href="${CONTACTS.branch.phoneHref}">${CONTACTS.branch.phone}</a></p>
+        <p class="sociallinks"><a class="btn btn--red" href="${CONTACTS.branch.href}" data-magnetic>Меню этой точки →</a></p>
+      </div>` : ''}
       <div class="infoblock">
         <p class="infoblock__cap">Часы работы</p>
         <dl class="hours">${hours}</dl>

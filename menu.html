@@ -3,17 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Меню — Чевапно Место, сербское бистро</title>
-<meta name="description" content="Меню сербского бистро «Чевапно Место»: бургеры с плескавицей, заверотоны, питы, ланчи с гарниром, чорбы, салаты и закуски. Цены и граммовки.">
+<title>Меню на 5-й Просеке, 95а — Чевапно Место</title>
+<meta name="description" content="Меню «Чевапно Место» на 5-й Просеке, 95а в Самаре: блюда на мангале, пицца на балканском тесте, бургеры с плескавицей, питы, ланчи, чорбы. Самовывоз и доставка: +7 (987) 939-30-13.">
 <meta name="theme-color" content="#210803">
 <link rel="icon" href="assets/img/el-loc-red.png" type="image/png">
 <link rel="preload" href="assets/fonts/arkhip.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/tiktoksans-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="data/prosek.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="css/menu.css">
 </head>
 <body>
 
 <a class="skip" href="#menuList">К меню</a>
+
+<p class="preview-bar" id="previewBar" hidden>
+  Черновик из админки — посетители его не видят.
+  <a href="admin.html">Вернуться в админку</a>
+</p>
 
 <!-- ═══════════════ ШАПКА ═══════════════ -->
 <header class="mh">
@@ -22,7 +28,7 @@
   </a>
   <nav class="mh__nav" aria-label="Навигация">
     <a class="mh__back" href="index.html"><span aria-hidden="true">←</span> На главную</a>
-    <a class="pill pill--red mh__order" href="#order">Заказать</a>
+    <a class="pill pill--red mh__order" data-tel href="#order">Позвонить</a>
   </nav>
 </header>
 
@@ -30,17 +36,25 @@
 <section class="mhero">
   <div class="mhero__bg" aria-hidden="true"><img src="assets/img/bg-3.webp" alt=""></div>
   <div class="mhero__inner">
-    <p class="eyebrow">Сербское бистро · <span data-city></span></p>
+    <p class="eyebrow">Сербское бистро · <span data-city>Самара</span></p>
     <h1 class="h">Меню</h1>
+    <p class="mhero__addr">
+      <img src="assets/img/el-loc-red.webp" alt="" width="14" height="18">
+      <span data-address>5-я Просека, 95а</span>
+    </p>
+    <a class="callout" data-tel href="#order">
+      <span class="callout__label" data-phone-label>Самовывоз и доставка</span>
+      <span class="callout__phone" data-phone>+7 (987) 939-30-13</span>
+    </a>
     <ul class="mhero__stats" id="stats"></ul>
     <label class="search" for="q">
       <span class="search__label">Найти блюдо</span>
-      <input class="search__input" id="q" type="search" placeholder="плескавица, чорба, сырный…"
+      <input class="search__input" id="q" type="search" placeholder="шашлык, пицца, чорба…"
              autocomplete="off" enterkeyhint="search">
       <button class="search__clear" type="button" id="qClear" aria-label="Очистить поиск" hidden>×</button>
     </label>
     <div class="mhero__dish" aria-hidden="true">
-      <img src="assets/img/dish/burger-govyadina.webp" alt="" width="680" height="680" fetchpriority="low">
+      <img src="assets/img/dish/grill-shashlik-pork.webp" alt="" width="680" height="680" fetchpriority="low">
     </div>
     <p class="mhero__note">Цены в рублях, вес — в граммах. <img src="assets/img/el-pepper-red.webp" alt="" width="14" height="14"> — острое.</p>
   </div>
@@ -54,6 +68,10 @@
 </nav>
 
 <main class="mlist" id="menuList">
+  <p class="empty" id="loadError" hidden>
+    Не получилось загрузить меню. Проверьте интернет и обновите страницу.
+    <button class="pill pill--ghost" type="button" onclick="location.reload()">Обновить</button>
+  </p>
   <p class="empty" id="empty" hidden>
     Ничего не нашли по запросу «<span id="emptyQ"></span>».
     <button class="pill pill--ghost" type="button" id="emptyReset">Показать всё меню</button>
@@ -64,13 +82,13 @@
 <!-- ═══════════════ ЗАКАЗ ═══════════════ -->
 <section class="order" id="order">
   <div class="order__inner">
-    <p class="eyebrow">Доставка и самовывоз</p>
-    <h2 class="h">Заказать домой</h2>
-    <p class="order__lead">Собираем сразу после того, как мясо сняли с углей, и закрываем контейнер фирменной пломбой.</p>
-    <div class="order__links" id="orderLinks"></div>
+    <p class="eyebrow" data-phone-label>Самовывоз и доставка</p>
+    <h2 class="h">Заказать</h2>
+    <p class="order__lead">Позвоните — примем заказ на самовывоз или доставку. Собираем сразу после того, как мясо сняли с углей.</p>
+    <a class="order__phone" data-tel href="#order" data-phone>+7 (987) 939-30-13</a>
     <div class="order__addr">
-      <p class="order__cap" id="addrCap">Адреса</p>
-      <ul id="addrList"></ul>
+      <p class="order__cap">Адрес</p>
+      <ul><li><img src="assets/img/el-loc-white.webp" alt="" width="14" height="18"><span data-address>5-я Просека, 95а</span></li></ul>
     </div>
   </div>
 </section>
@@ -80,14 +98,14 @@
   <p><a href="index.html">На главную</a> · © 2026 Чевапно Место</p>
 </footer>
 
-<a class="pill pill--red fab is-off" id="fab" href="#order">Заказать</a>
+<a class="pill pill--red fab is-off" id="fab" data-tel href="#order">Позвонить</a>
 
 <!-- ═══════════════ КАРТОЧКА БЛЮДА ═══════════════ -->
 <dialog class="sheet" id="sheet" aria-labelledby="sheetName">
   <div class="sheet__panel" id="sheetPanel">
     <span class="sheet__grip" aria-hidden="true"></span>
     <button class="sheet__close" type="button" id="sheetClose" aria-label="Закрыть">×</button>
-    <div class="sheet__media"><img id="sheetImg" src="" alt="" width="680" height="680"></div>
+    <div class="sheet__media" id="sheetMedia"><img id="sheetImg" src="data:," alt="" width="680" height="680"></div>
     <div class="sheet__info">
       <p class="eyebrow" id="sheetCat"></p>
       <h2 class="sheet__name" id="sheetName"></h2>
@@ -104,7 +122,7 @@
   </div>
 </dialog>
 
-<script src="js/content.js"></script>
+<script src="js/menu-data.js"></script>
 <script src="js/menu.js"></script>
 </body>
 </html>

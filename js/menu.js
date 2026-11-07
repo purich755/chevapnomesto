@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   ЧЕВАПНО МЕСТО · страница меню
-   Данные те же, что на главной: js/content.js.
+   ЧЕВАПНО МЕСТО · меню точки на 5-й Просеке
+   Данные — data/prosek.json (правится через admin.html).
+   С ?preview страница показывает неопубликованный черновик админки.
    ═══════════════════════════════════════════════════════════════ */
 (() => {
   'use strict';
@@ -10,49 +11,43 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const { num, fmtW, tel } = MenuData;
 
-  const num = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  const dish = (id) => `assets/img/dish/${id}.webp`;
+  // Текст приходит из админки — экранируем всё, что попадает в разметку
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const PEPPER = '<img class="hot" src="assets/img/el-pepper-red.webp" alt="остро" width="14" height="14">';
   const hot = (on) => (on ? PEPPER : '');
-  const ext = (href) => (/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : '');
   const norm = (s) => String(s || '').toLowerCase().replace(/ё/g, 'е');
+  // Картинка — путь в репозитории или data:-URL из черновика админки
+  const safeSrc = (src) => (/^(assets\/|data:image\/)/.test(src || '') ? src : '');
+  const optLabel = (o) => [o.label, fmtW(o.w)].filter(Boolean).map(esc).join(' · ');
 
-  /* ── Разделы в порядке страницы. Ланчи — отдельным разделом после пит. */
-  const byId = Object.fromEntries(MENU.map((c) => [c.id, c]));
-  const LUNCH = {
-    id: 'lunch',
-    title: 'Ланчи',
-    short: 'Ланчи',
-    note: 'гарнир на выбор',
-    lunch: true,
-    items: LUNCH_MAINS.map((m) => ({ ...m, d: `Соус ${m.sauce}` })),
-  };
-  const CATS = ['burgers', 'zaverotony', 'pity', LUNCH, 'chorby', 'salaty', 'zakuski', 'dobavki']
-    .map((c) => (typeof c === 'string' ? byId[c] : c))
-    .filter(Boolean);
+  let DATA = null;
+  let CATS = [];
 
   /* ─────────────────────────────── Рендер */
 
+  const media = (src, alt, cls) =>
+    safeSrc(src)
+      ? `<img src="${esc(src)}" alt="${esc(alt)}" width="680" height="680" loading="lazy" decoding="async">`
+      : `<span class="${cls}__ph" aria-hidden="true"><img src="assets/img/el-loc-white.webp" alt="" width="60" height="76"></span>`;
+
   function itemCard(c, it, i) {
-    const opts = it.opts
-      ? `<ul class="it__opts">${it.opts
-          .map(([l, w, p, h]) => `<li>${hot(h)}${l ? `${l} · ` : ''}${w} гр <b>${num(p)} ₽</b></li>`)
-          .join('')}</ul>`
+    const opts = it.opts && it.opts.length
+      ? `<ul class="it__opts">${it.opts.map((o) => `<li>${hot(o.hot)}${optLabel(o)} <b>${num(o.p)} ₽</b></li>`).join('')}</ul>`
       : '';
-    const q = norm([it.name, it.sub, it.d, c.title, (it.opts || []).map((o) => o[0]).join(' ')].join(' '));
+    const q = norm([it.name, it.sub, it.d, c.title, (it.opts || []).map((o) => o.label).join(' ')].join(' '));
+    const hasOpts = it.opts && it.opts.length;
     return `
-      <article class="it is-pre" data-cat="${c.id}" data-i="${i}" data-q="${q}">
-        <div class="it__media">
-          <img src="${dish(it.id)}" alt="${it.name}" width="680" height="680" loading="lazy" decoding="async">
-        </div>
+      <article class="it is-pre" data-cat="${esc(c.id)}" data-i="${i}" data-q="${esc(q)}">
+        <div class="it__media">${media(it.img, it.name, 'it')}</div>
         <div class="it__body">
-          <h3 class="it__name"><button class="it__btn" type="button">${hot(it.hot)}${it.name}</button></h3>
-          ${it.sub ? `<p class="it__sub">${it.sub}</p>` : ''}
-          ${it.d && !c.lunch ? `<p class="it__d">${it.d}</p>` : ''}
+          <h3 class="it__name"><button class="it__btn" type="button">${hot(it.hot)}${esc(it.name)}</button></h3>
+          ${it.sub ? `<p class="it__sub">${esc(it.sub)}</p>` : ''}
+          ${it.d ? `<p class="it__d">${esc(it.d)}</p>` : ''}
           ${opts}
           <p class="it__nums">
-            <span class="it__w">${it.opts ? 'от' : `${it.w} гр`}</span>
+            <span class="it__w">${hasOpts ? 'от' : esc(fmtW(it.w))}</span>
             <span class="it__p">${num(it.p)} ₽</span>
           </p>
         </div>
@@ -61,76 +56,70 @@
 
   function plainRow(c, it) {
     return `
-      <div class="plain__row" data-q="${norm(it.name + ' ' + c.title)}">
-        <span>${hot(it.hot)}${it.name}</span>
+      <div class="plain__row" data-q="${esc(norm(it.name + ' ' + c.title))}">
+        <span>${hot(it.hot)}${esc(it.name)}</span>
         <span class="plain__dots" aria-hidden="true"></span>
-        <span class="plain__w">${it.w} гр</span>
+        <span class="plain__w">${esc(fmtW(it.w))}</span>
         <span class="plain__p">${num(it.p)} ₽</span>
       </div>`;
   }
 
-  function lunchIntro() {
-    const sides = LUNCH_SIDES.map(
-      (s) => `
-      <div class="side">
-        <img src="${dish(s.id)}" alt="${s.name}" width="680" height="680" loading="lazy" decoding="async">
-        <b>${s.name}</b><span>${s.sub}</span>
-      </div>`
-    ).join('');
-    return `
-      <p class="lunchnote"><b>В каждом ланче:</b> ${LUNCH_NOTE.replace(/^В каждом ланче:\s*/, '')}</p>
-      <div class="sides" aria-label="Гарнир на выбор">${sides}</div>`;
+  function catIntro(c) {
+    let out = '';
+    if (c.intro) out += `<p class="lunchnote"><b>Входит:</b> ${esc(c.intro)}</p>`;
+    if (c.sides && c.sides.length) {
+      out += `<div class="sides" aria-label="Гарнир на выбор">${c.sides.map((s) => `
+        <div class="side">
+          ${safeSrc(s.img) ? `<img src="${esc(s.img)}" alt="${esc(s.name)}" width="680" height="680" loading="lazy" decoding="async">` : ''}
+          <b>${esc(s.name)}</b><span>${esc(s.sub)}</span>
+        </div>`).join('')}</div>`;
+    }
+    return out;
   }
 
   function render() {
-    $$('[data-city]').forEach((el) => (el.textContent = CONTACTS.city));
+    const P = DATA.place || {};
+    $$('[data-city]').forEach((el) => (el.textContent = P.city || ''));
+    $$('[data-address]').forEach((el) => (el.textContent = P.address || ''));
+    $$('[data-phone]').forEach((el) => (el.textContent = P.phone || ''));
+    $$('[data-phone-label]').forEach((el) => (el.textContent = P.phoneLabel || ''));
+    $$('[data-tel]').forEach((el) => (el.href = tel(P.phone)));
 
     // Цифры в шапке считаются из данных, чтобы не разъезжались с меню
     const dishes = CATS.reduce((n, c) => n + c.items.length, 0);
-    const lunchFrom = Math.min(...LUNCH_MAINS.map((m) => m.p));
-    $('#stats').innerHTML = [
-      [dishes, '', 'позиций'],
-      [CATS.length, '', 'разделов'],
-      [lunchFrom, '₽', 'ланч с гарниром от'],
-    ]
+    const stats = [[dishes, '', 'позиций'], [CATS.length, '', 'разделов']];
+    const grill = CATS.find((c) => c.id === 'grill');
+    const lunch = CATS.find((c) => c.id === 'lunch');
+    const minP = (c) => Math.min(...c.items.map((i) => +i.p || Infinity));
+    if (grill && grill.items.length) stats.push([minP(grill), '₽', 'мангал от']);
+    else if (lunch && lunch.items.length) stats.push([minP(lunch), '₽', 'ланч от']);
+    $('#stats').innerHTML = stats
       .map(([n, u, l]) => `<li><p class="stat__n">${num(n)}${u ? `<small>${u}</small>` : ''}</p><p class="stat__l">${l}</p></li>`)
       .join('');
 
     // Бегущая строка — названия разделов
-    const run = CATS.map((c) => `<span class="band__item">${c.title}<img src="assets/img/el-loc-dark.webp" alt="" width="12" height="15"></span>`).join('');
+    const run = CATS.map((c) => `<span class="band__item">${esc(c.title)}<img src="assets/img/el-loc-dark.webp" alt="" width="12" height="15"></span>`).join('');
     $('#band').innerHTML = `<div class="band__inner">${run.repeat(4)}</div>`;
 
     $('#catsScroll').innerHTML = CATS.map(
-      (c) => `<a class="chip" href="#c-${c.id}" data-cat="${c.id}">${c.short || c.title} <i>${c.items.length}</i></a>`
+      (c) => `<a class="chip" href="#c-${esc(c.id)}" data-cat="${esc(c.id)}">${esc(c.short || c.title)} <i>${c.items.length}</i></a>`
     ).join('');
 
     $('#sections').innerHTML = CATS.map((c, ci) => {
       const head = `
         <header class="cat__head">
           <span class="cat__num">${String(ci + 1).padStart(2, '0')}</span>
-          <h2 class="h">${c.title}</h2>
-          ${c.note ? `<p class="cat__note">${c.note}</p>` : ''}
+          <h2 class="h" id="h-${esc(c.id)}">${esc(c.title)}</h2>
+          ${c.note ? `<p class="cat__note">${esc(c.note)}</p>` : ''}
         </header>`;
       let body;
-      if (c.plain) {
-        body = `<div class="plain">${c.items.map((it) => plainRow(c, it)).join('')}</div>
-          <p class="drinks"><b>${MENU_FOOT}</b></p>`;
+      if (c.type === 'list') {
+        body = `<div class="plain">${c.items.map((it) => plainRow(c, it)).join('')}</div>`;
       } else {
-        body = (c.lunch ? lunchIntro() : '') + `<div class="grid">${c.items.map((it, i) => itemCard(c, it, i)).join('')}</div>`;
+        body = catIntro(c) + `<div class="grid">${c.items.map((it, i) => itemCard(c, it, i)).join('')}</div>`;
       }
-      return `<section class="cat" id="c-${c.id}" data-cat="${c.id}" aria-labelledby="h-${c.id}">${head.replace('<h2 class="h">', `<h2 class="h" id="h-${c.id}">`)}${body}</section>`;
-    }).join('');
-
-    // Заказ
-    const d = CONTACTS.delivery;
-    $('#orderLinks').innerHTML =
-      d.aggregators.map((a) => `<a class="pill pill--dark" href="${a.href}"${ext(a.href)}>${a.label}</a>`).join('') +
-      `<a class="pill pill--ghost" href="${CONTACTS.phoneHref}">${CONTACTS.phone}</a>`;
-    const n = CONTACTS.addresses.length;
-    $('#addrCap').textContent = `Адреса · ${n} ${n === 1 ? 'точка' : 'точки'} в городе`;
-    $('#addrList').innerHTML = CONTACTS.addresses
-      .map((a) => `<li><img src="assets/img/el-loc-white.webp" alt="" width="14" height="18">${a}</li>`)
-      .join('');
+      return `<section class="cat" id="c-${esc(c.id)}" data-cat="${esc(c.id)}" aria-labelledby="h-${esc(c.id)}">${head}${body}</section>`;
+    }).join('') + (P.footNote ? `<p class="drinks"><b>${esc(P.footNote)}</b></p>` : '');
   }
 
   /* ─────────────────────────────── Появление карточек */
@@ -247,7 +236,7 @@
         });
         sec.hidden = shown === 0;
         // гарниры и пояснение ланча нужны только вместе с ланчами
-        $$('.sides, .lunchnote, .drinks', sec).forEach((x) => (x.hidden = !!q));
+        $$('.sides, .lunchnote', sec).forEach((x) => (x.hidden = !!q));
         const chip = $(`.chip[data-cat="${sec.dataset.cat}"]`);
         if (chip) {
           chip.hidden = shown === 0;
@@ -256,6 +245,8 @@
         total += shown;
       });
       empty.hidden = total > 0;
+      const drinks = $('.drinks');
+      if (drinks) drinks.hidden = !!q;
       $('#emptyQ').textContent = input.value.trim();
       spy();
     }
@@ -284,37 +275,40 @@
 
     function fill() {
       const it = list[idx];
-      $('#sheetImg').src = dish(it.id);
-      $('#sheetImg').alt = it.name;
-      $('#sheetCat').innerHTML = `<b>${cat.title}</b>`;
+      const img = $('#sheetImg');
+      const src = safeSrc(it.img);
+      $('#sheetMedia').classList.toggle('is-empty', !src);
+      img.hidden = !src;
+      if (src) { img.src = src; img.alt = it.name; }
+      $('#sheetCat').innerHTML = `<b>${esc(cat.title)}</b>`;
       $('#sheetName').textContent = it.name;
       $('#sheetSub').textContent = it.sub || '';
 
-      let price = '';
-      if (it.opts) {
+      const hasOpts = it.opts && it.opts.length;
+      let price;
+      if (hasOpts) {
         price = `<ul class="sheet__opts">${it.opts
-          .map(([l, w, p, h]) => `<li>${hot(h)}<span>${l ? `${l} · ` : ''}${w} гр</span><b>${num(p)} ₽</b></li>`)
+          .map((o) => `<li>${hot(o.hot)}<span>${optLabel(o)}</span><b>${num(o.p)} ₽</b></li>`)
           .join('')}</ul>`;
       } else {
-        price = `<p class="sheet__price"><b>${num(it.p)} ₽</b><span>${it.w} гр</span></p>`;
+        price = `<p class="sheet__price"><b>${num(it.p)} ₽</b><span>${esc(fmtW(it.w))}</span></p>`;
       }
-      const isHot = it.hot || (it.opts && it.opts.some((o) => o[3]));
+      const isHot = it.hot || (hasOpts && it.opts.some((o) => o.hot));
       $('#sheetPrice').innerHTML =
-        price + (isHot ? `<p class="sheet__hot"><img src="assets/img/el-pepper-red.webp" alt="" width="13" height="13">${it.opts ? 'есть острый вариант' : 'остро'}</p>` : '');
+        price + (isHot ? `<p class="sheet__hot"><img src="assets/img/el-pepper-red.webp" alt="" width="13" height="13">${hasOpts && !it.hot ? 'есть острый вариант' : 'остро'}</p>` : '');
 
       let body = '';
-      if (cat.lunch) {
-        body = `<p class="sheet__h">Соус</p><p class="sheet__d">${it.sauce}</p>
-          <p class="sheet__h">В ланче</p><p class="sheet__d">${LUNCH_NOTE.replace(/^В каждом ланче:\s*/, '')}</p>
-          <p class="sheet__h">Гарнир на выбор</p><p class="sheet__d">${LUNCH_SIDES.map((s) => `${s.name} (${s.sub})`).join(', ')}</p>`;
-      } else if (it.d) {
-        body = `<p class="sheet__h">Состав</p><p class="sheet__d">${it.d}</p>`;
+      if (it.d) body += `<p class="sheet__h">Состав</p><p class="sheet__d">${esc(it.d)}</p>`;
+      if (cat.intro) body += `<p class="sheet__h">Входит</p><p class="sheet__d">${esc(cat.intro)}</p>`;
+      if (cat.sides && cat.sides.length) {
+        body += `<p class="sheet__h">Гарнир на выбор</p><p class="sheet__d">${cat.sides.map((x) => esc(`${x.name} (${x.sub})`)).join(', ')}</p>`;
       }
       $('#sheetBody').innerHTML = body;
 
-      $('#sheetOrder').innerHTML = CONTACTS.delivery.aggregators
-        .map((a) => `<a class="pill pill--red" href="${a.href}"${ext(a.href)}>${a.label}</a>`)
-        .join('');
+      const P = DATA.place || {};
+      $('#sheetOrder').innerHTML = P.phone
+        ? `<a class="pill pill--red" href="${esc(tel(P.phone))}">Позвонить · ${esc(P.phone)}</a>`
+        : '';
       $('#sheetCount').textContent = `${idx + 1} / ${list.length}`;
       panel.scrollTop = 0;
     }
@@ -390,10 +384,21 @@
     new IntersectionObserver(([e]) => { orderSeen = e.isIntersecting; sync(); }, { threshold: .05 }).observe($('#order'));
   }
 
-  render();
-  initReveal();
-  const spy = initCats();
-  initSearch(spy);
-  initSheet();
-  initFab();
+  const preview = new URLSearchParams(location.search).has('preview');
+  MenuData.load({ preview })
+    .then((data) => {
+      DATA = data;
+      CATS = (data.categories || []).filter((c) => c.items && c.items.length);
+      if (preview && MenuData.readDraft()) $('#previewBar').hidden = false;
+      render();
+      initReveal();
+      const spy = initCats();
+      initSearch(spy);
+      initSheet();
+      initFab();
+    })
+    .catch(() => {
+      $('#loadError').hidden = false;
+      initFab();
+    });
 })();

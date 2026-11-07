@@ -291,6 +291,10 @@ def step_photo():
 BOARDS_SRC = os.environ.get('CHEVAPNO_BOARDS', os.path.join(os.path.expanduser('~'), 'Downloads'))
 BOARD1 = os.path.join(BOARDS_SRC, '01_ChIPI_SAMARA_07-10_4P_1.png')
 BOARD2 = os.path.join(BOARDS_SRC, '02_ChIPI_SAMARA_07-10_4P.png')
+# Меню точки на 5-й Просеке: блюда на мангале (2000 px)
+BOARD3 = os.path.join(os.path.dirname(SRC), 'Меню 5-я просека', 'mangal.webp')
+# Фото пицц вырезаны раньше с отдельного борда пиццы (лучше разрешение,
+# цены те же) и лежат в assets/img/dish/pizza-*.webp — скрипт их не трогает.
 
 # ключ -> (борд, x0, y0, x1, y1)
 DISHES = {
@@ -349,6 +353,17 @@ DISHES = {
     'salad-fresh':        (2, 3800, 1740, 4210, 2155),
     'salad-caesar-c':     (2, 3800, 2230, 4205, 2640),
     'salad-caesar-s':     (2, 3800, 2695, 4205, 3105),
+    # ── борд 3 · блюда на мангале (меню 5-й Просеки)
+    'grill-chicken-steak': (3, 40, 330, 356, 612),
+    'grill-pork-steak':    (3, 30, 615, 356, 900),
+    'grill-beef-steak':    (3, 30, 930, 356, 1212),
+    'grill-ribs':          (3, 40, 1265, 356, 1552),
+    'grill-salmon':        (3, 40, 1592, 366, 1890),
+    'grill-shashlik-chicken': (3, 995, 318, 1350, 605),
+    'grill-shashlik-pork':    (3, 995, 610, 1352, 895),
+    'grill-kupaty':        (3, 1028, 925, 1352, 1215),
+    'grill-kupaty-cheese': (3, 1028, 1236, 1352, 1527),
+    'grill-veggies':       (3, 1058, 1560, 1335, 1782),
 }
 
 _board_cache = {}
@@ -356,7 +371,7 @@ _board_cache = {}
 
 def board(n):
     if n not in _board_cache:
-        path = {1: BOARD1, 2: BOARD2}[n]
+        path = {1: BOARD1, 2: BOARD2, 3: BOARD3}[n]
         if not os.path.exists(path):
             raise SystemExit('нет борда: %s' % path)
         im = Image.open(path).convert('RGB')
@@ -405,9 +420,8 @@ def cut_square(crop, mask, out_size=680, fill=0.86):
 
 
 def step_dishes():
+    # Папку не чистим: в ней же лежат фото пицц, вырезанные раньше
     outdir = os.path.join(IMG, 'dish')
-    for f in os.listdir(outdir):
-        os.remove(os.path.join(outdir, f))
     made = 0
     for key, spec in DISHES.items():
         bn, x0, y0, x1, y1 = spec

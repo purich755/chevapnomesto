@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Админка меню — Чевапно Место</title>
+<meta name="theme-color" content="#210803">
+<link rel="icon" href="assets/img/el-loc-red.png" type="image/png">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<header class="ah">
+  <a class="ah__logo" href="menu.html" aria-label="Открыть меню">
+    <img src="assets/img/logo-h-white.webp" alt="Чевапно Место" width="300" height="39">
+  </a>
+  <p class="ah__title">Админка меню <span id="placeName">5-я Просека, 95а</span></p>
+  <div class="ah__right">
+    <a class="lnk" href="menu.html" target="_blank" rel="noopener">Открыть меню ↗</a>
+    <button class="lnk" type="button" id="logout" hidden>Выйти</button>
+  </div>
+</header>
+
+<!-- ═══════════════ ВХОД ═══════════════ -->
+<section class="login" id="login" hidden>
+  <div class="card login__card">
+    <h1 class="h">Вход</h1>
+    <p class="muted">Чтобы публиковать изменения, нужен ключ доступа к репозиторию сайта на GitHub. Его выдаёт разработчик.</p>
+    <form id="loginForm" autocomplete="off">
+      <label class="fld">
+        <span class="fld__l">Ключ доступа</span>
+        <input class="inp" id="token" type="password" placeholder="github_pat_…" required spellcheck="false">
+      </label>
+      <label class="chk"><input type="checkbox" id="remember"> Запомнить на этом устройстве</label>
+      <p class="err" id="loginErr" hidden></p>
+      <div class="row">
+        <button class="btn btn--red" type="submit" id="loginBtn">Войти</button>
+        <button class="btn btn--ghost" type="button" id="guest">Посмотреть без входа</button>
+      </div>
+    </form>
+    <details class="help">
+      <summary>Где взять ключ</summary>
+      <ol>
+        <li>Владелец репозитория открывает <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Settings → Fine-grained tokens</a>.</li>
+        <li>Repository access: <b>Only select repositories</b> → <b>chevapnomesto</b>.</li>
+        <li>Permissions → Repository → <b>Contents: Read and write</b>. Больше ничего не нужно.</li>
+        <li>Нажать Generate и вставить ключ сюда.</li>
+      </ol>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════ РЕДАКТОР ═══════════════ -->
+<main class="ed" id="editor" hidden>
+  <div class="bar" id="bar">
+    <p class="bar__status" id="status" role="status">Загружаю меню…</p>
+    <div class="bar__btns">
+      <button class="btn btn--ghost" type="button" id="revert" disabled>Отменить правки</button>
+      <button class="btn btn--ghost" type="button" id="preview">Предпросмотр</button>
+      <button class="btn btn--red" type="button" id="publish" disabled>Опубликовать</button>
+    </div>
+  </div>
+
+  <p class="note" id="draftNote" hidden>
+    Есть неопубликованный черновик от <b id="draftTime"></b>.
+    <button class="lnk" type="button" id="draftKeep">Продолжить с ним</button>
+    <button class="lnk" type="button" id="draftDrop">Взять опубликованное</button>
+  </p>
+
+  <section class="card">
+    <h2 class="h2">Точка</h2>
+    <div class="grid2" id="place"></div>
+  </section>
+
+  <div class="cats" id="cats"></div>
+
+  <button class="btn btn--ghost btn--wide" type="button" data-act="cat-add">+ Добавить раздел</button>
+
+  <p class="foot muted">После публикации сайт обновляется примерно за минуту. Черновик сохраняется в этом браузере сам — можно закрыть вкладку и вернуться.</p>
+</main>
+
+<input type="file" id="file" accept="image/*" hidden>
+
+<script src="js/menu-data.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

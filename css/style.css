@@ -1196,6 +1196,7 @@ h1, h2, h3, .arkhip {
 .hours dt { font-size: var(--fs-small); color: var(--w-45); min-width: 6em; letter-spacing: .1em; text-transform: uppercase; }
 .hours dd { margin: 0; font-family: 'Arkhip', sans-serif; letter-spacing: -.04em; font-size: clamp(.95rem, 1.14vw, 1.14rem); }
 .sociallinks { display: flex; flex-wrap: wrap; gap: 10px; }
+.infoblock__note + .sociallinks { margin-top: 16px; }
 
 .map {
   position: relative;
