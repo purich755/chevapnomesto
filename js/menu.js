@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    ЧЕВАПНО МЕСТО · меню точки на 5-й Просеке
-   Данные — data/prosek.json (правится через admin.html).
-   С ?preview страница показывает неопубликованный черновик админки.
+   Данные — data/prosek.json.
    ═══════════════════════════════════════════════════════════════ */
 (() => {
   'use strict';
@@ -384,12 +383,10 @@
     new IntersectionObserver(([e]) => { orderSeen = e.isIntersecting; sync(); }, { threshold: .05 }).observe($('#order'));
   }
 
-  const preview = new URLSearchParams(location.search).has('preview');
-  MenuData.load({ preview })
+  MenuData.load()
     .then((data) => {
       DATA = data;
       CATS = (data.categories || []).filter((c) => c.items && c.items.length);
-      if (preview && MenuData.readDraft()) $('#previewBar').hidden = false;
       render();
       initReveal();
       const spy = initCats();

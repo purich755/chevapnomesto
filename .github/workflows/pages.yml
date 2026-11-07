@@ -27,7 +27,7 @@ jobs:
       - name: Collect site files
         run: |
           mkdir _site
-          cp -r index.html menu.html admin.html css js assets data _site/
+          cp -r index.html menu.html css js assets data _site/
           touch _site/.nojekyll
 
       - uses: actions/configure-pages@v5

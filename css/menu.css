@@ -89,19 +89,6 @@ p, h1, h2, h3 { margin: 0; }
 }
 .skip:focus { top: 12px; }
 
-/* Плашка черновика: страница открыта из админки с ?preview */
-.preview-bar {
-  position: sticky;
-  top: 0;
-  z-index: 70;
-  padding: 10px var(--pad);
-  background: var(--white);
-  color: var(--dark);
-  font-size: var(--fs-small);
-  text-align: center;
-}
-.preview-bar a { color: var(--red); text-decoration: underline; margin-left: .5em; }
-
 /* Кнопки-пилюли */
 .pill {
   display: inline-flex;
