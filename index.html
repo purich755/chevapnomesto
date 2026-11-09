@@ -257,7 +257,7 @@
 <section class="care" id="care" data-section="07" data-name="Упаковка">
   <div class="care__bg" aria-hidden="true"><img src="assets/img/bg-9.webp" alt=""></div>
   <div class="care__head">
-    <p class="eyebrow"><b>07</b> / Носители бренда</p>
+    <p class="eyebrow"><b>07</b> / Упаковка</p>
     <h2 class="h-sec reveal-mask">Упаковка и забота</h2>
   </div>
 
@@ -272,33 +272,10 @@
           <img src="assets/img/sticker-red.webp" alt="" width="380" height="394">
         </div>
       </div>
-      <h3 class="care__title">Стикер на контейнер</h3>
-      <p class="care__text">Стикер стоит ровно в месте открытия контейнера. Цел — значит, до вас его никто не открывал.</p>
-    </article>
-
-    <article class="care__card care__card--paper">
-      <div class="paper" id="paperStamps" aria-hidden="true"></div>
-      <h3 class="care__title">Упаковочная бумага</h3>
-      <p class="care__text">Крафт с паттерном из штампов. Печати — как символ качества продукта.</p>
-    </article>
-
-    <article class="care__card care__card--apron">
-      <div class="apron" aria-hidden="true">
-        <img src="assets/img/el-fire-red.webp" alt="" width="520" height="298">
+      <div class="care__body">
+        <h3 class="care__title">Стикер на контейнер</h3>
+        <p class="care__text">Стикер стоит ровно в месте открытия контейнера. Цел — значит, до вас его никто не открывал.</p>
       </div>
-      <h3 class="care__title">Фартук и плейсмент</h3>
-      <p class="care__text">Фирменный текстиль на кухне и подложка на поднос: пламя, паттерн, три цвета — и ни одного лишнего.</p>
-    </article>
-
-    <article class="care__card care__card--logos">
-      <div class="logos" id="logoCarousel" aria-hidden="true">
-        <img src="assets/img/logo-main-white.webp" alt="" class="is-on">
-        <img src="assets/img/logo-h-white.webp" alt="">
-        <img src="assets/img/stamp-white.webp" alt="">
-        <img src="assets/img/sticker-white.webp" alt="">
-      </div>
-      <h3 class="care__title">Логотип в деле</h3>
-      <p class="care__text">Основная версия, горизонтальная, штамп и стикер — четыре роли одного знака.</p>
     </article>
   </div>
 </section>
@@ -314,6 +291,8 @@
       <p class="eyebrow"><b>08</b> / Доставка</p>
       <h2 class="h-sec reveal-mask">Привезём, пока горячее</h2>
       <p class="delivery__lead reveal-up">Пита не любит ждать. Собираем заказ сразу после того, как мясо сняли с углей, и закрываем контейнер фирменной пломбой.</p>
+      <div class="delivery__own reveal-up" id="deliveryOwn"></div>
+      <p class="delivery__or reveal-up">Или через Яндекс Еду</p>
       <div class="delivery__links reveal-up" id="deliveryLinks"></div>
     </div>
   </div>
@@ -348,19 +327,8 @@
             <rect x="420" y="230" width="120" height="76" rx="3"/>
           </g>
         </svg>
-        <!-- Три точки на карте — по числу адресов -->
-        <div class="map__pin map__pin--a">
-          <span class="map__pulse"></span>
-          <img src="assets/img/el-loc-red.webp" alt="" width="46" height="58">
-        </div>
-        <div class="map__pin map__pin--b">
-          <span class="map__pulse"></span>
-          <img src="assets/img/el-loc-red.webp" alt="" width="46" height="58">
-        </div>
-        <div class="map__pin map__pin--c">
-          <span class="map__pulse"></span>
-          <img src="assets/img/el-loc-red.webp" alt="" width="46" height="58">
-        </div>
+        <!-- Метки ставит js/main.js — по числу точек в CONTACTS.points -->
+        <div id="mapPins"></div>
         <p class="map__cap" id="mapCap"></p>
       </div>
     </div>

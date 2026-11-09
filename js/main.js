@@ -147,11 +147,28 @@
     ).join('');
   }
 
+  // 1 точка · 2 точки · 5 точек
+  const plural = (n, [one, few, many]) => {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+    return many;
+  };
+
   function buildDelivery() {
     const d = CONTACTS.delivery;
+    // Своя доставка — главная плашка блока, агрегаторы идут вторым рядом
+    const own = CONTACTS.points.find((p) => p.delivery && p.phone);
+    $('#deliveryOwn').innerHTML = own ? `
+      <a class="dlv" href="${own.phoneHref}" data-magnetic>
+        <span class="dlv__label">${own.phoneLabel} · ${own.address}</span>
+        <span class="dlv__phone">${own.phone}</span>
+        <span class="dlv__note">${own.note}</span>
+      </a>
+      ${own.menu ? `<a class="dlv__menu" href="${own.menu}">Меню этой точки →</a>` : ''}` : '';
     $('#deliveryLinks').innerHTML = d.aggregators
       .map((a) => `<a class="btn btn--ghost" href="${a.href}"${extAttr(a.href)} data-magnetic>${a.label}</a>`)
-      .join('') + `<a class="btn btn--red" href="${CONTACTS.phoneHref}" data-magnetic>${CONTACTS.phone}</a>`;
+      .join('');
 
     $('#deliveryStats').innerHTML = [
       [d.time, d.timeUnit, d.timeLabel],
@@ -168,31 +185,27 @@
       .join('');
   }
 
+  // Схематичные позиции меток на карте — по числу точек
+  const PIN_POS = [[24, 40], [44, 30], [38, 66], [66, 34], [74, 66]];
+
   function buildPlace() {
-    const hours = CONTACTS.hours.map(([d, t]) => `<div><dt>${d}</dt><dd>${t}</dd></div>`).join('');
-    const addrs = CONTACTS.addresses
-      .map((a) => `<p class="infoblock__addr"><img src="assets/img/el-loc-red.webp" alt="" width="14" height="18">${CONTACTS.city}, ${a}</p>`)
-      .join('');
-    const n = CONTACTS.addresses.length;
+    const pts = CONTACTS.points;
+    const n = pts.length;
+    const items = pts.map((p) => {
+      const hours = (p.hours || []).map(([d, t]) => `<div><dt>${d}</dt><dd>${t}</dd></div>`).join('');
+      return `
+        <li class="pt${p.delivery ? ' pt--accent' : ''}">
+          <p class="pt__addr"><img src="assets/img/el-loc-${p.delivery ? 'white' : 'red'}.webp" alt="" width="14" height="18">${p.address}${p.delivery ? '<span class="pt__tag">Доставка</span>' : ''}</p>
+          ${p.note ? `<p class="pt__note">${p.note}</p>` : ''}
+          ${p.phone ? `<p class="pt__phone">${p.phoneLabel ? `<span>${p.phoneLabel}</span>` : ''}<a href="${p.phoneHref}">${p.phone}</a></p>` : ''}
+          ${hours ? `<dl class="hours">${hours}</dl>` : ''}
+          ${p.menu ? `<p class="pt__more"><a class="btn btn--red" href="${p.menu}" data-magnetic>Меню этой точки →</a></p>` : ''}
+        </li>`;
+    }).join('');
     $('#placeInfo').innerHTML = `
       <div class="infoblock">
-        <p class="infoblock__cap">Адреса · ${n} ${n === 1 ? 'точка' : 'точки'} в городе</p>
-        ${addrs}
-      </div>
-      ${CONTACTS.branch ? `
-      <div class="infoblock">
-        <p class="infoblock__cap">${CONTACTS.city}, ${CONTACTS.branch.address}</p>
-        <p class="infoblock__note">${CONTACTS.branch.note}. ${CONTACTS.branch.phoneLabel}:
-          <a href="${CONTACTS.branch.phoneHref}">${CONTACTS.branch.phone}</a></p>
-        <p class="sociallinks"><a class="btn btn--red" href="${CONTACTS.branch.href}" data-magnetic>Меню этой точки →</a></p>
-      </div>` : ''}
-      <div class="infoblock">
-        <p class="infoblock__cap">Часы работы</p>
-        <dl class="hours">${hours}</dl>
-      </div>
-      <div class="infoblock">
-        <p class="infoblock__cap">Телефон</p>
-        <p class="infoblock__val"><a href="${CONTACTS.phoneHref}">${CONTACTS.phone}</a></p>
+        <p class="infoblock__cap">${CONTACTS.city} · ${n} ${plural(n, ['точка', 'точки', 'точек'])}</p>
+        <ul class="pts">${items}</ul>
       </div>
       <div class="infoblock">
         <p class="infoblock__cap">Мы в сети</p>
@@ -200,20 +213,17 @@
           .map((s) => `<a class="btn btn--ghost" href="${s.href}"${extAttr(s.href)} data-magnetic>${s.label}</a>`)
           .join('')}</p>
       </div>`;
-    $('#mapCap').textContent = `${CONTACTS.city} · ${n} ${n === 1 ? 'точка' : 'точки'}`;
+    $('#mapPins').innerHTML = pts.map((p, i) => {
+      const [x, y] = PIN_POS[i % PIN_POS.length];
+      return `<div class="map__pin${p.delivery ? ' map__pin--main' : ''}" style="left:${x}%;top:${y}%">
+          <span class="map__pulse" style="animation-delay:${(i * .7).toFixed(1)}s"></span>
+          <img src="assets/img/el-loc-red.webp" alt="" width="46" height="58">
+          <span class="map__label">${p.address}</span>
+        </div>`;
+    }).join('');
+    $('#mapCap').textContent = `${CONTACTS.city} · ${n} ${plural(n, ['точка', 'точки', 'точек'])}`;
     $('#footerSocials').innerHTML = CONTACTS.socials
       .map((s) => `<a href="${s.href}"${extAttr(s.href)}>${s.label}</a>`)
-      .join('');
-  }
-
-  function buildPaper() {
-    // Крафт с паттерном из штампов: слегка разноповёрнутые печати
-    const spots = [
-      [4, 6, -12], [40, 2, 8], [74, 10, -5], [16, 44, 14], [52, 38, -9],
-      [84, 48, 6], [2, 74, -7], [36, 70, 11], [70, 78, -14],
-    ];
-    $('#paperStamps').innerHTML = spots
-      .map(([x, y, r]) => `<img src="assets/img/stamp-red.webp" alt="" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)" width="180" height="180" loading="lazy">`)
       .join('');
   }
 
@@ -525,25 +535,6 @@
       .to(top, { yPercent: -14, xPercent: -3, rotation: -6, duration: .9, ease: EASE })
       .to(bottom, { yPercent: 14, xPercent: 3, rotation: 5, duration: .9, ease: EASE }, 0)
       .to(under, { opacity: 1, duration: .5, ease: EASE }, .3);
-  }
-
-  function initPaperParallax() {
-    if (REDUCED) return;
-    gsap.fromTo('#paperStamps', { yPercent: -7 }, {
-      yPercent: 7, ease: 'none',
-      scrollTrigger: { trigger: '.care__card--paper', start: 'top bottom', end: 'bottom top', scrub: true },
-    });
-  }
-
-  function initLogoCarousel() {
-    const imgs = $$('#logoCarousel img');
-    if (imgs.length < 2 || REDUCED) return;
-    let i = 0;
-    setInterval(() => {
-      imgs[i].classList.remove('is-on');
-      i = (i + 1) % imgs.length;
-      imgs[i].classList.add('is-on');
-    }, 2600);
   }
 
   function initDeliveryArt() {
@@ -886,7 +877,6 @@
     buildLunch();
     buildDelivery();
     buildPlace();
-    buildPaper();
 
     initHeader();
     initMenuTabs();
@@ -900,8 +890,6 @@
       initStamp();
       initAboutPhoto();
       initSeal();
-      initPaperParallax();
-      initLogoCarousel();
       initDeliveryArt();
       initEmber();
       initShowcase();

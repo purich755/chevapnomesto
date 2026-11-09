@@ -219,6 +219,7 @@ PHOTOS = {
     '78-1.jpg': ('photo-burger', 2000),         # бургер целиком
     '83.jpg': ('photo-burger-macro', 2000),     # макро бургера
     'Generated_Image_November_20_2025_-_4_20PM.png': ('photo-chevapdog', 1400),
+    'burger-prosek.webp': ('photo-burger-prosek', 1600),  # бургер для шапки меню Просеки
 }
 
 
@@ -233,6 +234,7 @@ CUTOUTS = {
     'photo-burger': 'cut-burger',
     'photo-chevapdog': 'cut-chevapdog',
     'photo-lunch-top': 'cut-lunch-top',
+    'photo-burger-prosek': 'cut-burger-prosek',
 }
 
 
@@ -260,6 +262,25 @@ def white_matte(im, thr=4.6, keep=0.04):
     return out
 
 
+# У бургера Просеки на белом лежит светлая тень — срезаем её по краю маски
+FRINGE = {'photo-burger-prosek'}
+
+
+def strip_white_fringe(im, cut):
+    a = np.asarray(cut.split()[3]) > 128
+    rgb = np.asarray(im.convert('RGB')).astype(int)
+    whiteish = (rgb.min(2) > 200) & ((rgb.max(2) - rgb.min(2)) < 22)
+    edge = a & ~ndimage.binary_erosion(a, np.ones((41, 41)))
+    a = ndimage.binary_opening(a & ~(whiteish & edge), np.ones((7, 7)))
+    lab, n = ndimage.label(a)
+    if n:
+        a = lab == (np.argmax(ndimage.sum(a, lab, range(1, n + 1))) + 1)
+    a = ndimage.binary_erosion(ndimage.binary_fill_holes(a), np.ones((5, 5)))
+    al = ndimage.gaussian_filter(a.astype(np.float32), 1.6)
+    cut.putalpha(Image.fromarray((al * 255).astype(np.uint8), 'L'))
+    return cut
+
+
 def step_photo():
     made = {}
     for name, (out, longest) in PHOTOS.items():
@@ -275,7 +296,10 @@ def step_photo():
         log(out, im.size)
 
     for key, out in CUTOUTS.items():
-        cut = trim_alpha(white_matte(made[key]), thr=8)
+        cut = white_matte(made[key])
+        if key in FRINGE:
+            cut = strip_white_fringe(made[key], cut)
+        cut = trim_alpha(cut, thr=8)
         save_webp(fit(cut, 1500), out + '.webp', q=86)
         log(out, cut.size, '(вырезано с белого)')
 
@@ -293,8 +317,8 @@ BOARD1 = os.path.join(BOARDS_SRC, '01_ChIPI_SAMARA_07-10_4P_1.png')
 BOARD2 = os.path.join(BOARDS_SRC, '02_ChIPI_SAMARA_07-10_4P.png')
 # Меню точки на 5-й Просеке: блюда на мангале (2000 px)
 BOARD3 = os.path.join(os.path.dirname(SRC), 'Меню 5-я просека', 'mangal.webp')
-# Фото пицц вырезаны раньше с отдельного борда пиццы (лучше разрешение,
-# цены те же) и лежат в assets/img/dish/pizza-*.webp — скрипт их не трогает.
+# Пиццы — со старого отдельного борда пиццы: там они крупнее, цены те же
+BOARD4 = 'Дизайн без названия (33).png'
 
 # ключ -> (борд, x0, y0, x1, y1)
 DISHES = {
@@ -364,6 +388,12 @@ DISHES = {
     'grill-kupaty':        (3, 1028, 925, 1352, 1215),
     'grill-kupaty-cheese': (3, 1028, 1236, 1352, 1527),
     'grill-veggies':       (3, 1058, 1560, 1335, 1782),
+    # ── борд 4 · пиццы
+    'pizza-4cheese':      (4, 120, 660, 650, 1175),
+    'pizza-ham':          (4, 120, 1180, 670, 1700),
+    'pizza-meat':         (4, 100, 1725, 670, 2260),
+    'pizza-pepperoni':    (4, 95, 2285, 640, 2805),
+    'pizza-chicken':      (4, 110, 2830, 640, 3350),
 }
 
 _board_cache = {}
@@ -371,7 +401,7 @@ _board_cache = {}
 
 def board(n):
     if n not in _board_cache:
-        path = {1: BOARD1, 2: BOARD2, 3: BOARD3}[n]
+        path = {1: BOARD1, 2: BOARD2, 3: BOARD3, 4: src(BOARD4)}[n]
         if not os.path.exists(path):
             raise SystemExit('нет борда: %s' % path)
         im = Image.open(path).convert('RGB')
@@ -407,6 +437,39 @@ def board_matte(roi):
     return ndimage.binary_erosion(mask, np.ones((5, 5)))
 
 
+# Чёрный лоток на почти чёрном фоне борда маска видит рвано — берём
+# выпуклую оболочку: недостающие края лотка заполняются его же пикселями
+HULL = {'lunch-trake', 'lunch-kids', 'lunch-breakfast'}
+# Пицца на фирменном пламени тянет за собой красную кайму — ужимаем сильнее
+ERODE = {'pizza-pepperoni': 7}
+# Пицца на диагональном фоне (тёмный + красный): колоночная матовка путается,
+# берём маску по зелёному каналу — у теста и сыра он высокий, у фона низкий
+BRIGHT = {'pizza-chicken'}
+
+
+def bright_mask(roi, thr=80):
+    g = np.asarray(roi.convert('RGB'))[:, :, 1]
+    m = ndimage.binary_opening(g > thr, np.ones((5, 5)))
+    lab, n = ndimage.label(m)
+    if n:
+        sizes = ndimage.sum(m, lab, range(1, n + 1))
+        keep = [i + 1 for i, v in enumerate(sizes) if v > sizes.max() * .05]
+        m = np.isin(lab, keep)
+    m = ndimage.binary_closing(m, np.ones((9, 9)))
+    return ndimage.binary_fill_holes(m)
+
+
+def hull_mask(mask):
+    from scipy.spatial import ConvexHull
+    ys, xs = np.where(mask)
+    pts = np.stack([xs, ys], 1)
+    h = ConvexHull(pts)
+    poly = [tuple(map(int, pts[i])) for i in h.vertices]
+    img = Image.new('L', (mask.shape[1], mask.shape[0]), 0)
+    ImageDraw.Draw(img).polygon(poly, fill=255)
+    return np.asarray(img) > 0
+
+
 def cut_square(crop, mask, out_size=680, fill=0.86):
     """Блюдо по маске, по центру квадрата, с мягкой кромкой."""
     a = (mask.astype(np.float32) * 255).astype(np.uint8)
@@ -425,8 +488,27 @@ def step_dishes():
     made = 0
     for key, spec in DISHES.items():
         bn, x0, y0, x1, y1 = spec
-        roi = board(bn).crop((x0, y0, x1, y1))
-        mask = board_matte(roi)
+        im = board(bn)
+        # Если блюдо упирается в край рамки, рамку раздвигаем в эту сторону —
+        # иначе на сайте у лотков и пицц срезан ровной линией край
+        for _ in range(10):
+            roi = im.crop((x0, y0, x1, y1))
+            mask = board_matte(roi)
+            step = 24
+            grow = [mask[:, :3].any(1).mean() > .03, mask[:3].any(0).mean() > .03,
+                    mask[:, -3:].any(1).mean() > .03, mask[-3:].any(0).mean() > .03]
+            if not any(grow):
+                break
+            x0 = max(0, x0 - step * grow[0]); y0 = max(0, y0 - step * grow[1])
+            x1 = min(im.size[0], x1 + step * grow[2]); y1 = min(im.size[1], y1 + step * grow[3])
+        else:
+            log('!! край не отпустил:', key)
+        if key in BRIGHT:
+            mask = bright_mask(roi)
+        if key in HULL:
+            mask = hull_mask(mask)
+        if key in ERODE:
+            mask = ndimage.binary_erosion(mask, np.ones((ERODE[key], ERODE[key])))
         ys, xs = np.where(mask)
         if len(xs) == 0:
             log('!! пусто:', key)
