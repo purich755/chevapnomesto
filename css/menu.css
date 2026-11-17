@@ -553,6 +553,12 @@ p, h1, h2, h3 { margin: 0; }
 }
 
 /* ═══════════════ ЗАКАЗ ═══════════════ */
+/* ── Зона доставки (карта — css/zone.css) ── */
+.mzone { padding: clamp(60px, 9vw, 130px) var(--pad) 0; scroll-margin-top: calc(var(--hdr) + 12px); }
+.mzone__head { max-width: var(--maxw); margin: 0 auto; }
+.mzone__head .eyebrow { margin-bottom: 1em; }
+.mzone .zone { margin-top: clamp(26px, 3.4vw, 44px); }
+
 .order {
   margin-top: clamp(60px, 9vw, 130px);
   padding: clamp(56px, 8vw, 110px) var(--pad);

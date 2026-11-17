@@ -10,6 +10,7 @@
 <link rel="preload" href="assets/fonts/arkhip.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/tiktoksans-semibold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/zone.css">
 </head>
 <body class="is-loading">
 
@@ -296,6 +297,8 @@
       <div class="delivery__links reveal-up" id="deliveryLinks"></div>
     </div>
   </div>
+  <!-- Зона доставки 5-й Просеки: живая карта, строит js/zone.js из data/zone.json -->
+  <div class="zone" data-zone id="zone"></div>
   <ul class="stats" id="deliveryStats"></ul>
 </section>
 
@@ -366,5 +369,6 @@
 <script src="js/vendor/SplitText.min.js"></script>
 <script src="js/content.js"></script>
 <script src="js/main.js"></script>
+<script src="js/zone.js" defer></script>
 </body>
 </html>

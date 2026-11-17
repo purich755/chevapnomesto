@@ -11,6 +11,7 @@
 <link rel="preload" href="assets/fonts/tiktoksans-semibold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="data/prosek.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/zone.css">
 </head>
 <body>
 
@@ -74,6 +75,15 @@
   <div id="sections"></div>
 </main>
 
+<!-- ═══════════════ ЗОНА ДОСТАВКИ ═══════════════ -->
+<section class="mzone" id="zone">
+  <div class="mzone__head">
+    <p class="eyebrow">Доставка с 5-й Просеки</p>
+    <h2 class="h">Зона доставки</h2>
+  </div>
+  <div class="zone" data-zone></div>
+</section>
+
 <!-- ═══════════════ ЗАКАЗ ═══════════════ -->
 <section class="order" id="order">
   <div class="order__inner">
@@ -119,5 +129,6 @@
 
 <script src="js/menu-data.js"></script>
 <script src="js/menu.js"></script>
+<script src="js/zone.js" defer></script>
 </body>
 </html>

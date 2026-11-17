@@ -165,7 +165,7 @@
         <span class="dlv__phone">${own.phone}</span>
         <span class="dlv__note">${own.note}</span>
       </a>
-      ${own.menu ? `<a class="dlv__menu" href="${own.menu}">Меню этой точки →</a>` : ''}` : '';
+      <p class="dlv__more"><a class="dlv__menu" href="#zone">Зона доставки на карте ↓</a>${own.menu ? ` <a class="dlv__menu" href="${own.menu}">Меню этой точки →</a>` : ''}</p>` : '';
     $('#deliveryLinks').innerHTML = d.aggregators
       .map((a) => `<a class="btn btn--ghost" href="${a.href}"${extAttr(a.href)} data-magnetic>${a.label}</a>`)
       .join('');

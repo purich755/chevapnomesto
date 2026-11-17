@@ -1,0 +1,307 @@
+/* ═══════════════════════════════════════════════════════════════
+   ЗОНА ДОСТАВКИ · живая карта (Leaflet) + проверка адреса
+   Используется на главной (секция 08) и на menu.html.
+   Цвета — только фирменные: красный, тёмно-коричневый, белый.
+   ═══════════════════════════════════════════════════════════════ */
+.zone {
+  position: relative;
+  z-index: 1;
+  max-width: var(--maxw);
+  margin: clamp(48px, 6vw, 90px) auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  border: 1px solid rgba(255,255,255,.16);
+  background: #180502;
+  isolation: isolate;
+}
+
+/* ── карта ── */
+.zone__map {
+  position: relative;
+  min-height: clamp(380px, 46vw, 600px);
+  background: #180502;
+  overflow: hidden;
+}
+.zone__map .leaflet-container {
+  position: absolute;
+  inset: 0;
+  background: #180502;
+  font: inherit;
+}
+/* Светлые тайлы OSM → инверсия в ночную карту → подкраска в фирменный тёмно-коричневый */
+.zone__map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) grayscale(1) sepia(.55) saturate(2.2) hue-rotate(-14deg) brightness(.74) contrast(1.12); }
+.zone__map .leaflet-tile { transition: opacity .5s var(--ease); }
+
+/* Затемнение всего, что вне зоны */
+.zone-mask { pointer-events: none; }
+
+/* Контур зоны: рисуется линией при появлении, потом мягко дышит */
+.zone-edge {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(240,62,30,.85));
+}
+.zone.is-drawn .zone-edge { animation: zoneGlow 3.2s ease-in-out infinite 1.6s; }
+@keyframes zoneGlow { 50% { filter: drop-shadow(0 0 14px rgba(240,62,30,1)); } }
+.zone-fill { pointer-events: none; transition: fill-opacity .6s var(--ease); }
+
+/* Метка бистро */
+.zpin { position: relative; display: grid; place-items: center; width: 54px; height: 66px; }
+/* Leaflet ставит img в маркерах width:auto — перебиваем более точным селектором */
+.zone__map .leaflet-marker-pane .zpin img { position: relative; z-index: 2; width: 40px; height: auto; filter: drop-shadow(0 6px 10px rgba(0,0,0,.55)); }
+.zpin__pulse {
+  position: absolute;
+  left: 50%; bottom: 2px;
+  width: 90px; height: 90px;
+  margin-left: -45px;
+  border-radius: 50%;
+  border: 1.5px solid var(--red);
+  transform: scale(.2);
+  opacity: 0;
+  animation: zpinPulse 2.8s var(--ease) infinite;
+}
+.zpin__pulse:nth-child(2) { animation-delay: 1.4s; }
+@keyframes zpinPulse { 0% { transform: scale(.2); opacity: .9; } 100% { transform: scale(1.15); opacity: 0; } }
+
+/* Подпись к метке */
+.leaflet-tooltip.ztip {
+  background: var(--red);
+  color: #fff;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  font-family: 'Arkhip', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -.03em;
+  font-size: 13px;
+  line-height: 1.1;
+  padding: 7px 10px 6px;
+}
+.leaflet-tooltip.ztip small {
+  display: block;
+  font-family: 'TikTok Sans', sans-serif;
+  letter-spacing: .14em;
+  font-size: 9px;
+  opacity: .85;
+  margin-bottom: 2px;
+}
+.leaflet-tooltip-top.ztip::before { border-top-color: var(--red); }
+
+/* Точка проверенного адреса */
+.zdot { position: relative; width: 22px; height: 22px; }
+.zdot i {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: #fff;
+  border: 5px solid var(--dark);
+  box-shadow: 0 0 0 2px #fff, 0 6px 16px rgba(0,0,0,.5);
+}
+.zdot.is-in i { background: var(--red); box-shadow: 0 0 0 2px #fff, 0 0 18px rgba(240,62,30,.9); }
+.zdot.is-out i { background: var(--dark); }
+.zdot::after {
+  content: '';
+  position: absolute; inset: -14px;
+  border-radius: 50%;
+  border: 1.5px solid #fff;
+  animation: zpinPulse 1.6s var(--ease) 2;
+  opacity: 0;
+}
+
+/* Кнопки масштаба и атрибуция — в фирменном стиле */
+.zone__map .leaflet-bar { border: 0; box-shadow: none; }
+.zone__map .leaflet-bar a {
+  width: 40px; height: 40px; line-height: 38px;
+  background: rgba(33,8,3,.88);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+  font: 400 20px/38px 'TikTok Sans', sans-serif;
+}
+.zone__map .leaflet-bar a + a { margin-top: 6px; }
+.zone__map .leaflet-bar a:hover { background: var(--red); border-color: var(--red); color: #fff; }
+.zone__map .leaflet-bar a.leaflet-disabled { opacity: .35; background: rgba(33,8,3,.88); }
+.zone__map .leaflet-control-attribution {
+  background: rgba(33,8,3,.72);
+  color: rgba(255,255,255,.55);
+  font-size: 10px;
+  padding: 2px 6px;
+}
+.zone__map .leaflet-control-attribution a { color: rgba(255,255,255,.75); }
+
+/* Подсказка «колесо = прокрутка страницы» */
+.zone__hintbar {
+  position: absolute;
+  z-index: 500;
+  left: 50%; top: 14px;
+  transform: translate(-50%, -8px);
+  padding: 8px 14px;
+  background: rgba(33,8,3,.9);
+  border: 1px solid rgba(255,255,255,.16);
+  color: rgba(255,255,255,.8);
+  font-size: 12px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.zone__hintbar.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+/* Легенда поверх карты */
+.zone__legend {
+  position: absolute;
+  z-index: 500;
+  left: 14px; bottom: 26px;
+  display: flex; flex-wrap: wrap; gap: 6px 14px;
+  padding: 8px 12px;
+  background: rgba(33,8,3,.82);
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.75);
+  pointer-events: none;
+}
+.zone__legend span { display: inline-flex; align-items: center; gap: 7px; }
+.zone__legend i { width: 18px; height: 10px; border: 2px solid var(--red); background: rgba(240,62,30,.18); box-shadow: 0 0 8px rgba(240,62,30,.8); }
+.zone__legend img { width: 9px; height: auto; }
+
+/* Заглушка до загрузки карты */
+.zone__placeholder {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  color: rgba(255,255,255,.4);
+  font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+  background:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px) 0 0 / 56px 56px,
+    #180502;
+  transition: opacity .6s var(--ease);
+}
+.zone.is-ready .zone__placeholder { opacity: 0; pointer-events: none; }
+
+/* ── панель проверки ── */
+.zone__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(22px, 2.6vw, 40px);
+  border-left: 1px solid rgba(255,255,255,.12);
+  background: var(--dark);
+  color: #fff;
+  text-align: left;
+}
+.zone__eyebrow {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+}
+.zone__eyebrow b { color: var(--red); font-weight: inherit; }
+.zone__title {
+  font-family: 'Arkhip', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -.05em;
+  font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+  line-height: 1;
+  margin: 0;
+  font-weight: 400;
+}
+.zone__lead { font-size: var(--fs-small); color: rgba(255,255,255,.66); line-height: 1.55; margin: 0; max-width: 40ch; }
+
+.zone__form { display: grid; gap: 8px; margin: 0; }
+.zone__label { font-size: var(--fs-eyebrow); letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+.zone__field { display: flex; border: 1px solid rgba(255,255,255,.24); background: rgba(255,255,255,.04); transition: border-color .3s var(--ease); }
+.zone__field:focus-within { border-color: var(--red); }
+.zone__input {
+  flex: 1; min-width: 0;
+  padding: 0 14px;
+  min-height: 50px;
+  border: 0; background: none; color: #fff;
+  font: inherit; font-size: 16px;
+  outline: none;
+}
+.zone__input::placeholder { color: rgba(255,255,255,.38); }
+.zone__go {
+  flex: 0 0 auto;
+  padding: 0 18px;
+  border: 0;
+  background: var(--red);
+  color: #fff;
+  font: inherit;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+.zone__go:hover { background: #fff; color: var(--dark); }
+.zone__go[disabled] { opacity: .6; cursor: progress; }
+.zone__alt { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: var(--fs-small); color: rgba(255,255,255,.55); }
+.zone__geo {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 999px;
+  background: none; color: #fff;
+  font: inherit; font-size: var(--fs-eyebrow);
+  letter-spacing: .16em; text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .3s var(--ease), background .3s var(--ease);
+}
+.zone__geo:hover { border-color: var(--red); background: rgba(240,62,30,.12); }
+.zone__geo svg { width: 14px; height: 14px; }
+
+/* Ответ проверки */
+.zone__result { min-height: 0; }
+.zone__result:empty { display: none; }
+.zres {
+  padding: 16px 18px;
+  border: 1px solid rgba(255,255,255,.16);
+  animation: zresIn .5s var(--ease);
+}
+@keyframes zresIn { from { opacity: 0; transform: translateY(8px); } }
+.zres__k { font-size: var(--fs-eyebrow); letter-spacing: .2em; text-transform: uppercase; opacity: .8; }
+.zres__t { font-family: 'Arkhip', sans-serif; text-transform: uppercase; letter-spacing: -.04em; font-size: clamp(1.15rem, 1.6vw, 1.5rem); line-height: 1.05; margin: .35em 0 .3em; }
+.zres__a { font-size: var(--fs-small); opacity: .8; line-height: 1.45; }
+.zres__btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.zres__btn {
+  display: inline-flex; align-items: center;
+  min-height: 42px; padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: .16em; text-transform: uppercase;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+.zres--in { background: var(--red); border-color: var(--red); }
+.zres--in .zres__btn { background: var(--dark); border-color: var(--dark); color: #fff; }
+.zres--in .zres__btn:hover { background: #fff; border-color: #fff; color: var(--dark); }
+.zres--edge { border-color: var(--red); }
+.zres--edge .zres__btn, .zres--out .zres__btn { color: #fff; border-color: rgba(255,255,255,.4); }
+.zres--edge .zres__btn:hover, .zres--out .zres__btn:hover { background: var(--red); border-color: var(--red); }
+.zres--err { border-style: dashed; }
+
+/* Телефон точки внизу панели */
+.zone__call {
+  margin-top: auto;
+  display: grid; gap: 4px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+.zone__call span { font-size: var(--fs-eyebrow); letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+.zone__call a { font-family: 'Arkhip', sans-serif; letter-spacing: -.04em; font-size: clamp(1.3rem, 2vw, 1.8rem); line-height: 1; color: #fff; transition: color .3s var(--ease); }
+.zone__call a:hover { color: var(--red); }
+
+@media (max-width: 960px) {
+  .zone { grid-template-columns: minmax(0, 1fr); }
+  .zone__panel { border-left: 0; border-top: 1px solid rgba(255,255,255,.12); }
+  .zone__map { min-height: 420px; }
+}
+@media (max-width: 520px) {
+  .zone__map { min-height: 360px; }
+  .zone__legend { left: 10px; right: 10px; bottom: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zpin__pulse, .zdot::after, .zone.is-drawn .zone-edge { animation: none; }
+}
