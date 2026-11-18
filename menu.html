@@ -38,6 +38,7 @@
       <img src="assets/img/el-loc-red.webp" alt="" width="14" height="18">
       <span data-address>5-я Просека, 95а</span>
     </p>
+    <p class="mhero__hours" data-hours-line></p>
     <a class="callout" data-tel href="#order">
       <span class="callout__label" data-phone-label>Самовывоз и доставка</span>
       <span class="callout__phone" data-phone>+7 (987) 939-30-13</span>
@@ -90,10 +91,15 @@
     <p class="eyebrow" data-phone-label>Самовывоз и доставка</p>
     <h2 class="h">Заказать</h2>
     <p class="order__lead">Позвоните — примем заказ на самовывоз или доставку. Собираем сразу после того, как мясо сняли с углей.</p>
+    <p class="order__terms" data-delivery hidden></p>
     <a class="order__phone" data-tel href="#order" data-phone>+7 (987) 939-30-13</a>
     <div class="order__addr">
       <p class="order__cap">Адрес</p>
       <ul><li><img src="assets/img/el-loc-white.webp" alt="" width="14" height="18"><span data-address>5-я Просека, 95а</span></li></ul>
+    </div>
+    <div class="order__addr" data-hours-wrap hidden>
+      <p class="order__cap">Часы работы</p>
+      <dl class="order__hours" data-hours></dl>
     </div>
   </div>
 </section>

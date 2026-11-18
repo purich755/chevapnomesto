@@ -1121,6 +1121,7 @@ h1, h2, h3, .arkhip {
 .dlv__label { font-size: var(--fs-eyebrow); letter-spacing: .2em; text-transform: uppercase; opacity: .9; }
 .dlv__phone { font-family: 'Arkhip', sans-serif; letter-spacing: -.04em; font-size: clamp(1.8rem, 3.6vw, 3.4rem); line-height: 1; }
 .dlv__note { font-size: var(--fs-small); opacity: .85; }
+.dlv__terms { font-size: var(--fs-small); font-weight: 600; margin-top: .3em; padding-top: .6em; border-top: 1px solid rgba(255,255,255,.35); }
 .dlv__more { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 14px; }
 .dlv__menu { display: inline-block; font-size: var(--fs-small); color: var(--w-64); border-bottom: 1px solid var(--r-30); padding-bottom: 2px; }
 .dlv__menu:hover { color: #fff; border-color: var(--red); }
@@ -1202,7 +1203,7 @@ h1, h2, h3, .arkhip {
   background: var(--red);
   border-top: 0 !important;
 }
-.pt--accent .pt__note, .pt--accent .pt__phone span { color: rgba(255,255,255,.82); }
+.pt--accent .pt__note, .pt--accent .pt__phone span, .pt--accent .hours dt { color: rgba(255,255,255,.85); }
 .pt--accent .pt__phone a:hover { color: var(--dark); }
 .pt--accent .btn--red { background: var(--dark); border-color: var(--dark); color: #fff; }
 .pt__tag {

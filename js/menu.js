@@ -82,6 +82,11 @@
     $$('[data-address]').forEach((el) => (el.textContent = P.address || ''));
     $$('[data-phone]').forEach((el) => (el.textContent = P.phone || ''));
     $$('[data-phone-label]').forEach((el) => (el.textContent = P.phoneLabel || ''));
+    const H = Array.isArray(P.hours) ? P.hours : [];
+    $$('[data-hours-line]').forEach((el) => (el.textContent = H.map(([d, t]) => `${d} ${t}`).join(' · ')));
+    $$('[data-hours]').forEach((el) => (el.innerHTML = H.map(([d, t]) => `<div><dt>${esc(d)}</dt><dd>${esc(t)}</dd></div>`).join('')));
+    $$('[data-hours-wrap]').forEach((el) => (el.hidden = !H.length));
+    $$('[data-delivery]').forEach((el) => { el.textContent = P.delivery || ''; el.hidden = !P.delivery; });
     $$('[data-tel]').forEach((el) => (el.href = tel(P.phone)));
 
     // Цифры в шапке считаются из данных, чтобы не разъезжались с меню

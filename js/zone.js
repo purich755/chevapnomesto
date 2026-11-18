@@ -31,6 +31,7 @@
       <p class="zone__eyebrow" id="zoneEyebrow"><b>●</b> Зона доставки</p>
       <h3 class="zone__title">Доставим&nbsp;ли к&nbsp;вам?</h3>
       <p class="zone__lead">Привозим внутри красного контура вокруг бистро: от Дачи Головкина до Солнечной улицы. Введите адрес — проверим за секунду. Или просто нажмите на карту.</p>
+      <ul class="zone__terms" id="zoneTerms"></ul>
       <form class="zone__form" id="zoneForm" autocomplete="off">
         <label class="zone__label" for="zoneQ">Ваш адрес</label>
         <div class="zone__field">
@@ -76,7 +77,7 @@
 
   /* ── ответ ── */
   function verdict(ll, label) {
-    const z = DATA, s = z.store;
+    const z = DATA, s = z.store, T = z.terms || {};
     const isIn = inside(ll, z.polygon);
     const near = !isIn && edgeDist(ll, z.polygon) <= (z.edgeMeters || 60);
     const kind = isIn ? 'in' : near ? 'edge' : 'out';
@@ -84,7 +85,7 @@
     const aggs = (z.aggregators || []).map((a) => `<a class="zres__btn" href="${a.href}"${ext(a.href)}>${esc(a.label)}</a>`).join('');
     const where = label ? `<p class="zres__a">${esc(label)}</p>` : '';
     result.innerHTML = {
-      in: `<div class="zres zres--in"><p class="zres__k">Есть доставка</p><p class="zres__t">Привезём!</p>${where}<div class="zres__btns">${call}</div></div>`,
+      in: `<div class="zres zres--in"><p class="zres__k">Есть доставка</p><p class="zres__t">Привезём${T.time ? ' за ' + esc(T.time) : '!'}</p>${where}${T.price ? `<p class="zres__a">Доставка ${esc(T.price)}${T.free ? ', бесплатно ' + esc(T.free) : ''}</p>` : ''}<div class="zres__btns">${call}</div></div>`,
       edge: `<div class="zres zres--edge"><p class="zres__k">На границе зоны</p><p class="zres__t">Уточните по телефону</p>${where}<div class="zres__btns">${call}</div></div>`,
       out: `<div class="zres zres--out"><p class="zres__k">Вне зоны 5-й Просеки</p><p class="zres__t">Сюда — через Яндекс Еду</p>${where}<div class="zres__btns">${aggs}</div></div>`,
     }[kind];
@@ -257,7 +258,11 @@
   function renderStatic() {
     const s = DATA.store;
     $('zoneEyebrow').innerHTML = `<b>●</b> ${esc(DATA.title || 'Зона доставки')} · ${esc(s.address)}`;
-    $('zoneCall').innerHTML = `<span>${esc(s.phoneLabel)}</span><a href="${s.phoneHref}">${esc(s.phone)}</a>`;
+    const hours = (s.hours || []).map(([d, t]) => `${esc(d)} ${esc(t)}`).join(' · ');
+    $('zoneCall').innerHTML = `<span>${esc(s.phoneLabel)}</span><a href="${s.phoneHref}">${esc(s.phone)}</a>${hours ? `<em>${hours}</em>` : ''}`;
+    const T = DATA.terms || {};
+    $('zoneTerms').innerHTML = [[T.time, 'Время в пути'], [T.price, 'Доставка'], [T.free, 'Бесплатно'], [T.min, 'Мин. сумма заказа']]
+      .filter(([v]) => v).map(([v, k]) => `<li><small>${k}</small>${esc(v)}</li>`).join('');
   }
 
   async function start() {

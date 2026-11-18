@@ -164,21 +164,18 @@
         <span class="dlv__label">${own.phoneLabel} · ${own.address}</span>
         <span class="dlv__phone">${own.phone}</span>
         <span class="dlv__note">${own.note}</span>
+        ${d.terms ? `<span class="dlv__terms">${d.terms}</span>` : ''}
       </a>
       <p class="dlv__more"><a class="dlv__menu" href="#zone">Зона доставки на карте ↓</a>${own.menu ? ` <a class="dlv__menu" href="${own.menu}">Меню этой точки →</a>` : ''}</p>` : '';
     $('#deliveryLinks').innerHTML = d.aggregators
       .map((a) => `<a class="btn btn--ghost" href="${a.href}"${extAttr(a.href)} data-magnetic>${a.label}</a>`)
       .join('');
 
-    $('#deliveryStats').innerHTML = [
-      [d.time, d.timeUnit, d.timeLabel],
-      [d.price, d.priceUnit, d.priceLabel],
-      [d.days, d.daysUnit, d.daysLabel],
-    ]
+    $('#deliveryStats').innerHTML = d.stats
       .map(
         ([n, u, cap]) => `
       <li class="stat">
-        <p class="stat__num"><span data-count="${n}">0</span><i>${u}</i></p>
+        <p class="stat__num">${String(n).split('–').map((x) => `<span data-count="${x}">0</span>`).join('–')}<i>${u}</i></p>
         <p class="stat__cap">${cap}</p>
       </li>`
       )

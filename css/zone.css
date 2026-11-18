@@ -252,6 +252,30 @@
 .zone__geo:hover { border-color: var(--red); background: rgba(240,62,30,.12); }
 .zone__geo svg { width: 14px; height: 14px; }
 
+/* Условия доставки — четыре плашки */
+.zone__terms { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.zone__terms:empty { display: none; }
+.zone__terms li {
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.03);
+  font-family: 'Arkhip', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -.03em;
+  font-size: clamp(.82rem, .95vw, .95rem);
+  line-height: 1.15;
+}
+.zone__terms li:first-child { background: var(--red); border-color: var(--red); }
+.zone__terms small {
+  display: block;
+  margin-bottom: 4px;
+  font-family: 'TikTok Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: .18em;
+  color: rgba(255,255,255,.6);
+}
+.zone__terms li:first-child small { color: rgba(255,255,255,.85); }
+
 /* Ответ проверки */
 .zone__result { min-height: 0; }
 .zone__result:empty { display: none; }
@@ -292,6 +316,7 @@
 .zone__call span { font-size: var(--fs-eyebrow); letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.55); }
 .zone__call a { font-family: 'Arkhip', sans-serif; letter-spacing: -.04em; font-size: clamp(1.3rem, 2vw, 1.8rem); line-height: 1; color: #fff; transition: color .3s var(--ease); }
 .zone__call a:hover { color: var(--red); }
+.zone__call em { font-style: normal; font-size: var(--fs-small); color: rgba(255,255,255,.6); }
 
 @media (max-width: 960px) {
   .zone { grid-template-columns: minmax(0, 1fr); }
