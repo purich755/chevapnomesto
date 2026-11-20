@@ -185,7 +185,8 @@
     if (it.new) badges.push('<span class="badge badge--red">Новинка</span>');
     if (sec === 'main' && !isList && showcaseHas(it.id)) badges.push('<span class="badge">В витрине</span>');
     const w = it.opts && it.opts.length ? `${it.opts.length} вар.` : fmtW(it.w);
-    return `${esc(dishPrice(it))}${w ? ` · ${esc(w)}` : ''} ${badges.join('')}`;
+    // Подзаголовок в строке — чтобы различать «Стейк-Ланч · говядина» и «Стейк-Ланч · курица»
+    return `${it.sub ? `${esc(it.sub)} · ` : ''}${esc(dishPrice(it))}${w ? ` · ${esc(w)}` : ''} ${badges.join('')}`;
   }
 
   function dishRow(sec, listPath, it, i, len, isList) {
@@ -385,7 +386,8 @@
           <div class="sortable" data-list="showcase">
             ${list.map((s, i) => {
               const d = findDish(s.ref);
-              const k = `main:show:${s.ref}:${i}`;
+              // Ключ — по месту карточки: при выборе другого блюда редактор не должен сворачиваться
+              const k = `main:show:#${i}`;
               const op = S.open.has(k);
               return `
               <div class="dish${op ? ' is-open' : ''}${s.hidden ? ' is-off' : ''}" data-i="${i}">
@@ -628,6 +630,14 @@
       v = /^\d+$/.test(raw) ? Number(raw) : el.value;
       el.classList.toggle('is-bad', !/^\d+$/.test(raw));
     } else v = el.value;
+    // Выбрали другое блюдо в витрине: название и подпись меняем вместе с ним,
+    // если их не переписывали вручную (они совпадали с прежним блюдом)
+    if (/^showcase\.\d+\.ref$/.test(path)) {
+      const card = getPath(data(), path.replace(/\.ref$/, ''));
+      const was = findDish(card.ref), now = findDish(v);
+      if (now && (!card.name || card.name === 'Новая карточка' || (was && card.name === was.name))) card.name = now.name;
+      if (now && (!card.sub || (was && card.sub === (was.sub || '')))) card.sub = now.sub || '';
+    }
     setPath(data(), path, v);
     refreshRow(el);
     updateDirty();
@@ -637,13 +647,6 @@
     const el = e.target;
     if (el.dataset.act === 'showcase-toggle') return toggleShowcase(el.dataset.id, el.checked);
     if (el.tagName === 'SELECT' || el.dataset.kind === 'bool') {
-      // Выбор блюда в витрине: подставляем его название, если своё ещё не задано
-      if (/^showcase\.\d+\.ref$/.test(el.dataset.bind || '')) {
-        const i = +el.dataset.bind.split('.')[1];
-        const s = data('main').showcase[i];
-        const d = findDish(el.value);
-        if (d && (!s.name || s.name === 'Новая карточка')) { s.name = d.name; s.sub = d.sub || ''; }
-      }
       rerender();
     }
   });
@@ -693,7 +696,7 @@
       }
       case 'add-lunch': {
         const m = { id: uid('lunch'), name: 'Новый ланч', sub: '', sauce: '', w: 0, p: 0, img: '', hot: false, new: false, hidden: false };
-        list.push(m);
+        d.mains.push(m);
         const key = `lunch:mains:${m.id}`;
         S.open.add(key);
         rerender(`[data-key="${CSS.escape(key)}"] [data-bind$=".name"]`);
@@ -790,7 +793,7 @@
       case 'add-show': {
         const first = allDishesForShowcase().flatMap((g) => g.items)[0];
         d.showcase.push({ ref: first ? first.id : '', name: first ? first.name : 'Новая карточка', sub: first && first.it.sub ? first.it.sub : '', tag: '', hidden: false });
-        const k = `main:show:${first ? first.id : ''}:${d.showcase.length - 1}`;
+        const k = `main:show:#${d.showcase.length - 1}`;
         S.open.add(k);
         rerender();
         break;

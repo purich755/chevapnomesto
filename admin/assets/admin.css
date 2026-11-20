@@ -120,7 +120,7 @@ img { max-width: 100%; display: block; }
 .empty-note { color: var(--mute); padding: 18px; border: 1px dashed var(--line2); border-radius: var(--r); text-align: center; }
 
 /* ── поля ── */
-.field { display: grid; gap: 6px; min-width: 0; }
+.field { display: grid; gap: 6px; min-width: 0; align-content: start; } /* поля в одной строке — одной высоты, даже если у соседа есть подсказка */
 .field__label { font-size: 14px; font-weight: 600; color: var(--mute); }
 .field__hint { font-size: 13px; color: var(--mute); }
 .input, .textarea, .select {
@@ -282,7 +282,9 @@ img { max-width: 100%; display: block; }
   body { padding-bottom: 140px; }
   .page { padding: 16px 12px; }
   .top__logo span { display: none; }
-  .block__head { padding: 8px 8px 8px 12px; }
+  /* Шапка раздела: заголовок на всю ширину, кнопки — строкой ниже справа */
+  .block__head { padding: 8px 8px 8px 12px; flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; }
+  .block__title { flex: 1 1 calc(100% - 60px); }
   .dish__btns .icon-btn--move { display: none; }
   .dish__thumb { width: 44px; height: 44px; }
 }
