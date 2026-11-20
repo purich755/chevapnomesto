@@ -762,6 +762,28 @@ h1, h2, h3, .arkhip {
   letter-spacing: .16em;
   text-transform: uppercase;
 }
+/* Блюдо без фото (добавлено в админке, фото ещё не загрузили) */
+.mcard__media img[src$="el-loc-white.webp"], .dishcard__media img[src$="el-loc-white.webp"],
+.main__media img[src$="el-loc-white.webp"], .side__ring img[src$="el-loc-white.webp"] { object-fit: contain; padding: 24%; opacity: .22; }
+/* «от» перед ценой витрины: цена блюда с вариантами — минимальная */
+.dishcard__from { margin-left: auto; font-size: clamp(.82rem, .92vw, .96rem); color: var(--w-64); }
+.dishcard__from + .dishcard__p { margin-left: 0; }
+/* «Новинка» — тот же язык, что и ярлык витрины */
+.newmark {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: .6em;
+  background: var(--red);
+  color: var(--white);
+  padding: .38em .7em .32em;
+  font-family: 'TikTok Sans', sans-serif;
+  font-size: .62rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.newmark--card { position: absolute; top: 12px; left: 12px; z-index: 2; margin: 0; }
+.main__media { position: relative; }
 /* Метка «остро» идёт в потоке текста, а не отдельным блоком —
    иначе длинное название сдвигает её на свою строку */
 .hot {

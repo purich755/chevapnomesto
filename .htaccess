@@ -1,0 +1,14 @@
+# Чевапно Место — общие правила для Apache (Рег.ру Host-A)
+# Не показывать список файлов в папках
+Options -Indexes
+
+# Служебные файлы наружу не отдаём
+<FilesMatch "\.(md|py|log|lock|tmp|ini|sh)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

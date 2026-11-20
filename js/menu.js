@@ -37,16 +37,17 @@
       : '';
     const q = norm([it.name, it.sub, it.d, c.title, (it.opts || []).map((o) => o.label).join(' ')].join(' '));
     const hasOpts = it.opts && it.opts.length;
+    const from = hasOpts || it.from;
     return `
       <article class="it is-pre" data-cat="${esc(c.id)}" data-i="${i}" data-q="${esc(q)}">
-        <div class="it__media">${media(it.img, it.name, 'it')}</div>
+        <div class="it__media">${it.new ? '<span class="newmark">Новинка</span>' : ''}${media(it.img, it.name, 'it')}</div>
         <div class="it__body">
           <h3 class="it__name"><button class="it__btn" type="button">${hot(it.hot)}${esc(it.name)}</button></h3>
           ${it.sub ? `<p class="it__sub">${esc(it.sub)}</p>` : ''}
           ${it.d ? `<p class="it__d">${esc(it.d)}</p>` : ''}
           ${opts}
           <p class="it__nums">
-            <span class="it__w">${hasOpts ? 'от' : esc(fmtW(it.w))}</span>
+            <span class="it__w">${from ? 'от' : esc(fmtW(it.w))}</span>
             <span class="it__p">${num(it.p)} ₽</span>
           </p>
         </div>
@@ -56,10 +57,10 @@
   function plainRow(c, it) {
     return `
       <div class="plain__row" data-q="${esc(norm(it.name + ' ' + c.title))}">
-        <span>${hot(it.hot)}${esc(it.name)}</span>
+        <span>${hot(it.hot)}${esc(it.name)}${it.new ? ' <span class="newmark newmark--inline">Новинка</span>' : ''}</span>
         <span class="plain__dots" aria-hidden="true"></span>
         <span class="plain__w">${esc(fmtW(it.w))}</span>
-        <span class="plain__p">${num(it.p)} ₽</span>
+        <span class="plain__p">${it.from ? 'от ' : ''}${num(it.p)} ₽</span>
       </div>`;
   }
 
@@ -295,7 +296,7 @@
           .map((o) => `<li>${hot(o.hot)}<span>${optLabel(o)}</span><b>${num(o.p)} ₽</b></li>`)
           .join('')}</ul>`;
       } else {
-        price = `<p class="sheet__price"><b>${num(it.p)} ₽</b><span>${esc(fmtW(it.w))}</span></p>`;
+        price = `<p class="sheet__price"><b>${it.from ? 'от ' : ''}${num(it.p)} ₽</b><span>${esc(fmtW(it.w))}</span></p>`;
       }
       const isHot = it.hot || (hasOpts && it.opts.some((o) => o.hot));
       $('#sheetPrice').innerHTML =
@@ -391,7 +392,10 @@
   MenuData.load()
     .then((data) => {
       DATA = data;
-      CATS = (data.categories || []).filter((c) => c.items && c.items.length);
+      CATS = (data.categories || [])
+        .filter((c) => !c.hidden)
+        .map((c) => ({ ...c, items: (c.items || []).filter((it) => !it.hidden) }))
+        .filter((c) => c.items.length);
       render();
       initReveal();
       const spy = initCats();

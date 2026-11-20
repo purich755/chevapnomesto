@@ -1,0 +1,184 @@
+{
+  "note": "В каждом ланче: гарнир на выбор, салат коул-слоу (кроме Детского и Завтрака), помидор, огурец, айсберг, балканская пита (кроме Детского ланча), соус, лук маринованный к мясу.",
+  "sides": [
+    {
+      "id": "side-krompir",
+      "name": "Кромпир",
+      "sub": "2 шт / 100 гр",
+      "img": "assets/img/dish/side-krompir.webp",
+      "hidden": false
+    },
+    {
+      "id": "side-rice",
+      "name": "Рис",
+      "sub": "90 гр",
+      "img": "assets/img/dish/side-rice.webp",
+      "hidden": false
+    },
+    {
+      "id": "side-fries",
+      "name": "Кромпир-фри",
+      "sub": "70 гр",
+      "img": "assets/img/dish/side-fries.webp",
+      "hidden": false
+    }
+  ],
+  "mains": [
+    {
+      "id": "lunch-plesk-classic",
+      "name": "Плескавица-Ланч Классика",
+      "sub": "свинина-говядина",
+      "sauce": "томатный",
+      "w": 410,
+      "p": 560,
+      "img": "assets/img/dish/lunch-plesk-classic.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-plesk-spicy",
+      "name": "Плескавица-Ланч спайси",
+      "sub": "свинина-говядина",
+      "sauce": "томатный",
+      "w": 410,
+      "p": 580,
+      "img": "assets/img/dish/lunch-plesk-spicy.webp",
+      "hot": true,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-plesk-beef",
+      "name": "Плескавица-Ланч",
+      "sub": "говядина",
+      "sauce": "томатный",
+      "w": 430,
+      "p": 650,
+      "img": "assets/img/dish/lunch-plesk-beef.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-plesk-cheese",
+      "name": "Плескавица-Ланч сырная",
+      "sub": "свинина-говядина с сыром",
+      "sauce": "томатный",
+      "w": 410,
+      "p": 600,
+      "img": "assets/img/dish/lunch-plesk-cheese.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-chevapi",
+      "name": "Чевапи-Ланч",
+      "sub": "колбаски чевапи",
+      "sauce": "томатный",
+      "w": 440,
+      "p": 550,
+      "img": "assets/img/dish/lunch-chevapi.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-steak-beef",
+      "name": "Стейк-Ланч",
+      "sub": "говядина",
+      "sauce": "томатный",
+      "w": 425,
+      "p": 810,
+      "img": "assets/img/dish/lunch-steak-beef.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-steak-chicken",
+      "name": "Стейк-Ланч",
+      "sub": "курица",
+      "sauce": "томатный",
+      "w": 400,
+      "p": 490,
+      "img": "assets/img/dish/lunch-steak-chicken.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-steak-pork",
+      "name": "Стейк-Ланч",
+      "sub": "свинина",
+      "sauce": "томатный",
+      "w": 430,
+      "p": 530,
+      "img": "assets/img/dish/lunch-steak-pork.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-kebab-green",
+      "name": "Кебаб-ланч с зеленью",
+      "sub": "говядина-курица",
+      "sauce": "томатный",
+      "w": 435,
+      "p": 650,
+      "img": "assets/img/dish/lunch-kebab-green.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-kebab-cheese",
+      "name": "Кебаб-ланч с сыром",
+      "sub": "говядина-курица",
+      "sauce": "томатный",
+      "w": 435,
+      "p": 610,
+      "img": "assets/img/dish/lunch-kebab-cheese.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-trake",
+      "name": "Траке-Ланч",
+      "sub": "стрипсы куриные",
+      "sauce": "сырный, кетчуп",
+      "w": 390,
+      "p": 550,
+      "img": "assets/img/dish/lunch-trake.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-kids",
+      "name": "Детский ланч",
+      "sub": "куриные наггетсы",
+      "sauce": "сырный, кетчуп",
+      "w": 280,
+      "p": 360,
+      "img": "assets/img/dish/lunch-kids.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    },
+    {
+      "id": "lunch-breakfast",
+      "name": "Завтрак-Ланч",
+      "sub": "2 яйца",
+      "sauce": "кетчуп",
+      "w": 260,
+      "p": 270,
+      "img": "assets/img/dish/lunch-breakfast.webp",
+      "hot": false,
+      "new": false,
+      "hidden": false
+    }
+  ]
+}

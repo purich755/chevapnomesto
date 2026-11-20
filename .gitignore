@@ -1,1 +1,7 @@
 tools/shots/
+
+# Админка: настройки с хэшем пароля, резервные копии, журналы
+admin/config.php
+data/_backups/*
+!data/_backups/.htaccess
+*.log

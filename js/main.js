@@ -17,8 +17,19 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const dish = (id) => `assets/img/dish/${id}.webp`;
+  // Тексты приходят из админки — в разметку попадают только экранированными
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Фото: путь из данных, только из наших папок
+  // Без фото — фирменное пламя-заглушка (стиль в style.css)
+  const dish = (id, img) => (/^assets\/img\/(dish|uploads)\/[\w.-]+$/.test(img || '') ? img : 'assets/img/el-loc-white.webp');
   const num = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  // «460» → «460 гр»; «2 шт / 100 гр» и любой другой текст — как есть
+  const fmtW = (w) => {
+    const v = String(w ?? '').trim();
+    return /^\d+([.,]\d+)?$/.test(v) ? `${v} гр` : v;
+  };
+  const isFrom = (it) => !!(it.from || (it.opts && it.opts.length));
+  const badgeNew = (on, cls) => (on ? `<span class="${cls}">Новинка</span>` : '');
   const pepper = (on) =>
     on ? '<span class="hot" title="Остро"><img src="assets/img/el-pepper-red.webp" alt="остро" width="14" height="14"></span>' : '';
   // Внешние ссылки открываем в новой вкладке безопасно
@@ -33,7 +44,7 @@
   function buildMarquees() {
     const flame = 'assets/img/el-loc-dark.webp';
     const run = (words) =>
-      words.map((w) => `<span class="marquee__item">${w}<img src="${flame}" alt="" width="14" height="18"></span>`).join('');
+      words.map((w) => `<span class="marquee__item">${esc(w)}<img src="${flame}" alt="" width="14" height="18"></span>`).join('');
     // Дублируем ленту, чтобы шов был незаметен при бесконечной прокрутке
     $('#marqueeTop').innerHTML = run(MARQUEE_TOP).repeat(3);
     $('#marqueeBottom').innerHTML = run(MARQUEE_BOTTOM).repeat(3);
@@ -50,30 +61,30 @@
     $('#showcaseTrack').innerHTML = SHOWCASE.map(
       (d) => `
       <article class="dishcard">
-        ${d.tag ? `<span class="dishcard__tag">${d.tag}</span>` : ''}
+        ${d.tag ? `<span class="dishcard__tag">${esc(d.tag)}</span>` : ''}
         <div class="dishcard__media">
-          <img src="${dish(d.id)}" alt="${d.name}" width="680" height="680" loading="lazy" decoding="async">
+          <img src="${esc(dish(d.id, d.img))}" alt="${esc(d.name)}" width="680" height="680" loading="lazy" decoding="async">
         </div>
-        <h3 class="dishcard__name">${pepper(d.hot)}${d.name}</h3>
-        <p class="dishcard__sub">${d.sub || ''}</p>
+        <h3 class="dishcard__name">${pepper(d.hot)}${esc(d.name)}</h3>
+        <p class="dishcard__sub">${esc(d.sub)}</p>
         <p class="dishcard__meta">
-          ${d.w ? `<span class="dishcard__w">${d.w} гр</span>` : ''}
-          <span class="dishcard__p" data-count="${d.p}">${d.p}<span> ₽</span></span>
+          ${d.w ? `<span class="dishcard__w">${esc(fmtW(d.w))}</span>` : ''}
+          ${isFrom(d) ? '<span class="dishcard__from">от</span>' : ''}<span class="dishcard__p" data-count="${+d.p}">${+d.p}<span> ₽</span></span>
         </p>
       </article>`
     ).join('');
   }
 
   function priceMarkup(it) {
-    if (it.opts) return `<span class="mcard__w">от</span><span class="mcard__p">${num(it.p)} ₽</span>`;
-    return `<span class="mcard__w">${it.w} гр</span><span class="mcard__p">${num(it.p)} ₽</span>`;
+    if (isFrom(it)) return `<span class="mcard__w">от</span><span class="mcard__p">${num(+it.p)} ₽</span>`;
+    return `<span class="mcard__w">${esc(fmtW(it.w))}</span><span class="mcard__p">${num(+it.p)} ₽</span>`;
   }
 
   // Варианты одной позиции: «3 шт · 100 гр — 180 ₽»
   const optsMarkup = (it) =>
     it.opts
       ? `<ul class="mcard__opts">${it.opts
-          .map(([l, w, p, hot]) => `<li>${pepper(hot)}${l ? `${l} · ` : ''}${w} гр <b>${num(p)} ₽</b></li>`)
+          .map(([l, w, p, hot]) => `<li>${pepper(hot)}${[esc(l), esc(fmtW(w))].filter(Boolean).join(' · ')} <b>${num(+p)} ₽</b></li>`)
           .join('')}</ul>`
       : '';
 
@@ -83,19 +94,19 @@
       (c, i) =>
         `<button class="tab${i === 0 ? ' is-on' : ''}" role="tab" aria-selected="${i === 0}"
                  aria-controls="panel-${c.id}" id="tab-${c.id}" data-tab="${c.id}"
-                 title="${c.title}">${c.short || c.title}</button>`
+                 title="${esc(c.title)}">${esc(c.short || c.title)}</button>`
     ).join('');
 
     $('#menuPanels').innerHTML = MENU.map((c, i) => {
-      const note = `<p class="panel__note">${c.title}${c.note ? ` · ${c.note}` : ''}</p>`;
+      const note = `<p class="panel__note">${esc(c.title)}${c.note ? ` · ${esc(c.note)}` : ''}</p>`;
       if (c.plain) {
         const rows = c.items
           .map(
             (it) => `
           <div class="plainrow">
-            <span class="plainrow__name">${pepper(it.hot)}${it.name}</span>
+            <span class="plainrow__name">${pepper(it.hot)}${esc(it.name)}${badgeNew(it.new, 'newmark')}</span>
             <span class="plainrow__dots"></span>
-            <span class="plainrow__nums"><span>${it.w} гр</span><b>${it.p} ₽</b></span>
+            <span class="plainrow__nums"><span>${esc(fmtW(it.w))}</span><b>${isFrom(it) ? 'от ' : ''}${+it.p} ₽</b></span>
           </div>`
           )
           .join('');
@@ -107,13 +118,14 @@
           (it) => `
         <article class="mcard">
           <div class="mcard__media">
-            <img src="${dish(it.id)}" alt="${it.name}" width="680" height="680" loading="lazy" decoding="async">
+            ${badgeNew(it.new, 'newmark newmark--card')}
+            <img src="${esc(dish(it.id, it.img))}" alt="${esc(it.name)}" width="680" height="680" loading="lazy" decoding="async">
           </div>
-          <h3 class="mcard__name">${pepper(it.hot)}${it.name}</h3>
-          ${it.sub ? `<p class="mcard__sub">${it.sub}</p>` : ''}
+          <h3 class="mcard__name">${pepper(it.hot)}${esc(it.name)}</h3>
+          ${it.sub ? `<p class="mcard__sub">${esc(it.sub)}</p>` : ''}
           <p class="mcard__nums">${priceMarkup(it)}</p>
           ${optsMarkup(it)}
-          ${it.d ? `<p class="mcard__d">${it.d}</p>` : ''}
+          ${it.d ? `<p class="mcard__d">${esc(it.d)}</p>` : ''}
         </article>`
         )
         .join('');
@@ -128,21 +140,21 @@
       (s, i) => `
       <button class="side${i === 0 ? ' is-on' : ''}" role="radio" aria-checked="${i === 0}" data-side="${i}">
         <span class="side__ring">
-          <img src="${dish(s.id)}" alt="${s.name}" width="680" height="680" loading="lazy" decoding="async">
+          <img src="${esc(dish(s.id, s.img))}" alt="${esc(s.name)}" width="680" height="680" loading="lazy" decoding="async">
           <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" pathLength="1"/></svg>
         </span>
-        <span class="side__name">${s.name}</span>
-        <span class="side__sub">${s.sub}</span>
+        <span class="side__name">${esc(s.name)}</span>
+        <span class="side__sub">${esc(s.sub)}</span>
       </button>`
     ).join('');
 
     $('#lunchMains').innerHTML = LUNCH_MAINS.map(
       (m, i) => `
       <button class="main${i === 0 ? ' is-on' : ''}" role="radio" aria-checked="${i === 0}" data-main="${i}">
-        <span class="main__media"><img src="${dish(m.id)}" alt="${m.name}" width="680" height="680" loading="lazy" decoding="async"></span>
-        <span class="main__name">${pepper(m.hot)}${m.name}</span>
-        <span class="main__sub">${m.sub}</span>
-        <span class="main__nums"><span class="main__w">${m.w} гр</span><span class="main__p">${m.p} ₽</span></span>
+        <span class="main__media">${badgeNew(m.new, 'newmark newmark--card')}<img src="${esc(dish(m.id, m.img))}" alt="${esc(m.name)}" width="680" height="680" loading="lazy" decoding="async"></span>
+        <span class="main__name">${pepper(m.hot)}${esc(m.name)}</span>
+        <span class="main__sub">${esc(m.sub)}</span>
+        <span class="main__nums"><span class="main__w">${+m.w} гр</span><span class="main__p">${+m.p} ₽</span></span>
       </button>`
     ).join('');
   }
@@ -265,14 +277,14 @@
       const s = LUNCH_SIDES[side];
       elName.textContent = m.name;
       elNameSub.textContent = m.sub || '';
-      elSide.textContent = `Гарнир: ${s.name}, ${s.sub} · Соус: ${m.sauce}`;
+      elSide.textContent = `Гарнир: ${[s.name, s.sub].filter(Boolean).join(', ')}${m.sauce ? ` · Соус: ${m.sauce}` : ''}`;
       if (REDUCED) {
-        elW.textContent = m.w;
-        elP.textContent = num(m.p);
+        elW.textContent = +m.w;
+        elP.textContent = num(+m.p);
         return;
       }
       gsap.to(state, {
-        w: m.w, p: m.p, duration: .8, ease: 'power2.out', overwrite: true,
+        w: +m.w, p: +m.p, duration: .8, ease: 'power2.out', overwrite: true,
         onUpdate() {
           elW.textContent = Math.round(state.w);
           elP.textContent = num(Math.round(state.p));

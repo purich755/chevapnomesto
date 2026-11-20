@@ -1,0 +1,821 @@
+{
+  "menu": {
+    "foot": "Напитки в ассортименте",
+    "categories": [
+      {
+        "id": "burgers",
+        "title": "Бургеры и чевапи-дог",
+        "short": "Бургеры",
+        "note": "",
+        "hidden": false,
+        "type": "cards",
+        "items": [
+          {
+            "id": "burger-govyadina",
+            "name": "С плескавицей из говядины",
+            "sub": "",
+            "d": "булочка из печи, плескавица из говядины, сыр Чеддер, солёный огурец, помидор, лук красный, айсберг, соусы фирменные Бургер и Красный",
+            "w": "460",
+            "p": 650,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/burger-govyadina.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "burger-classic",
+            "name": "С плескавицей классика",
+            "sub": "",
+            "d": "булочка из печи, плескавица из говядины и свинины, сыр Чеддер, помидор, айсберг, соусы фирменные Бургер и Барбекю",
+            "w": "410",
+            "p": 570,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/burger-classic.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "burger-spicy",
+            "name": "С плескавицей спайси",
+            "sub": "",
+            "d": "булочка из печи, плескавица из говядины и свинины спайси, сыр Чеддер, помидор, лук красный, айсберг, соус фирменный Сливочно-перечный",
+            "w": "450",
+            "p": 580,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/burger-spicy.webp",
+            "hot": true,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "burger-piletina",
+            "name": "Пилетина-бургер",
+            "sub": "",
+            "d": "булочка из печи, стейк из курицы, сыр Чеддер, помидор, айсберг, соусы фирменный и Сырный",
+            "w": "400",
+            "p": 500,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/burger-piletina.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "burger-mini",
+            "name": "Мини-бургер",
+            "sub": "",
+            "d": "булочка, котлета куриная в панировке, айсберг, соус фирменный",
+            "w": "160",
+            "p": 110,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/burger-mini.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "chevapi-dog",
+            "name": "Чевапи-дог",
+            "sub": "",
+            "d": "булочка (хот-дог), колбаски чевапи, морковь по-корейски, лук кранч, горчица, соус фирменный Красный, соус фирменный Белый",
+            "w": "160",
+            "p": 230,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/chevapi-dog.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "id": "zaverotony",
+        "title": "Завертоны",
+        "short": "Завертоны",
+        "note": "",
+        "hidden": false,
+        "type": "cards",
+        "items": [
+          {
+            "id": "zav-classic",
+            "name": "Классика",
+            "sub": "",
+            "d": "тесто фило, курица-гриль на мангале, помидор, огурец, коул-слоу, морковь по-корейски, соус фирменный Красный, соус фирменный Белый",
+            "w": "270",
+            "p": 270,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/zav-classic.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "zav-beef",
+            "name": "С говядиной из печи",
+            "sub": "",
+            "d": "тесто фило, говядина из печи, огурец, помидор, лук красный, салат коул-слоу, айсберг, соус фирменный белый, соус Сеульский",
+            "w": "310",
+            "p": 490,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/zav-beef.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "zav-cheese",
+            "name": "Сырный",
+            "sub": "",
+            "d": "тесто фило, курица-гриль на мангале, помидор, айсберг, сыр Чеддер, сыр Сулугуни, соус фирменный Сырный",
+            "w": "315",
+            "p": 450,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/zav-cheese.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "zav-chevapi",
+            "name": "Чевапи",
+            "sub": "",
+            "d": "тесто фило, колбаски чевапи, кромпир фри, огурец, айсберг, соус Бургер, соус фирменный Красный",
+            "w": "240",
+            "p": 270,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/zav-chevapi.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "zav-gambori",
+            "name": "С Гамбори",
+            "sub": "",
+            "d": "тесто фило, креветки в панировке, помидор, айсберг, соус фирменный Сладкий и Терияки",
+            "w": "240",
+            "p": 390,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/zav-gambori.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "zav-chevapster",
+            "name": "Чевапстер",
+            "sub": "двойной чевапи",
+            "d": "тесто фило, колбаски чевапи, кромпир фри, огурец, айсберг, соус Бургер, соус фирменный Красный",
+            "w": "365",
+            "p": 440,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/zav-chevapster.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "id": "pity",
+        "title": "Питы",
+        "short": "Питы",
+        "note": "",
+        "hidden": false,
+        "type": "cards",
+        "items": [
+          {
+            "id": "pita-plesk",
+            "name": "Плескавица в пите",
+            "sub": "",
+            "d": "балканская пита, плескавица на выбор, айсберг, лук, помидор, соус фирменный, сыр Чеддер",
+            "w": "360",
+            "p": 490,
+            "from": false,
+            "opts": [
+              {
+                "label": "свинина-говядина",
+                "w": "360",
+                "p": 490,
+                "hot": false
+              },
+              {
+                "label": "свинина-говядина спайси",
+                "w": "360",
+                "p": 510,
+                "hot": true
+              },
+              {
+                "label": "говядина",
+                "w": "360",
+                "p": 590,
+                "hot": false
+              }
+            ],
+            "img": "assets/img/dish/pita-plesk.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "pita-beef",
+            "name": "С говядиной из печи",
+            "sub": "",
+            "d": "балканская пита, говядина из печи, помидор, огурец, лук красный, айсберг, соус сливочный хрен, фирменный Наршараб",
+            "w": "275",
+            "p": 490,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/pita-beef.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "pita-piletina",
+            "name": "Пилетина-гриль",
+            "sub": "",
+            "d": "балканская пита, курица-гриль на мангале, огурец, помидор, морковь по-корейски, айсберг, соус фирменный Белый и Сеульский",
+            "w": "270",
+            "p": 230,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/pita-piletina.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "pita-gambori",
+            "name": "Гамбори-пита",
+            "sub": "",
+            "d": "балканская пита, креветки в панировке, помидор, айсберг, соус фирменный Унаги",
+            "w": "186",
+            "p": 370,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/pita-gambori.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "pita-chevapi",
+            "name": "Чевапи-гриль",
+            "sub": "",
+            "d": "балканская пита, колбаски чевапи, помидор, айсберг, лук, солёный огурец, сыр Чеддер, соус Бургер",
+            "w": "210",
+            "p": 300,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/pita-chevapi.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "pita-egg",
+            "name": "Пита с яичницей",
+            "sub": "",
+            "d": "балканская пита, яйцо, помидор, айсберг, коул-слоу, соус Сырный, соус Сладкий Чили",
+            "w": "170",
+            "p": 200,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/pita-egg.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "id": "chorby",
+        "title": "Чорбы",
+        "short": "Чорбы",
+        "note": "балканские супы",
+        "hidden": false,
+        "type": "cards",
+        "items": [
+          {
+            "id": "chorba-chicken",
+            "name": "Куриная чорба",
+            "sub": "",
+            "d": "филе куриное, бульон куриный, картофель, морковь, лапша домашняя, лук репчатый",
+            "w": "420",
+            "p": 265,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/chorba-chicken.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "chorba-meat",
+            "name": "Мясная чорба",
+            "sub": "",
+            "d": "сосиска рубленая говяжья, грудка куриная копчёная, бульон куриный, картофель, лук репчатый, перец болгарский, морковь, фасоль, томаты в собственном соку",
+            "w": "400",
+            "p": 320,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/chorba-meat.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "chorba-tomyam-c",
+            "name": "Том-ям с пилетиной",
+            "sub": "",
+            "d": "филе куриное, грибы, кокосовое молоко, сливки, паста Том-Ям, соус Соевый, лимон, специи, имбирь, рис",
+            "w": "470",
+            "p": 370,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/chorba-tomyam-c.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "chorba-tomyam-s",
+            "name": "Том-ям с гамбори",
+            "sub": "",
+            "d": "креветки, грибы, кокосовое молоко, сливки, паста Том-Ям, соус Соевый, лимон, специи, имбирь, рис",
+            "w": "420",
+            "p": 480,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/chorba-tomyam-s.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "id": "salaty",
+        "title": "Салаты",
+        "short": "Салаты",
+        "note": "",
+        "hidden": false,
+        "type": "cards",
+        "items": [
+          {
+            "id": "salad-shopski",
+            "name": "Шопский",
+            "sub": "",
+            "d": "помидоры, огурцы, перец болгарский, лук, айсберг, маслины, сыр Фетакса, соус из свежей зелени",
+            "w": "200",
+            "p": 250,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/salad-shopski.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "salad-fresh",
+            "name": "Фреш-Кромпир",
+            "sub": "",
+            "d": "курица-гриль на мангале, огурец, помидор, морковь по-корейски, картофель-пай, соус белый фирменный, айсберг",
+            "w": "240",
+            "p": 300,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/salad-fresh.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "salad-caesar-c",
+            "name": "Цезарь с пилетиной",
+            "sub": "",
+            "d": "курица-гриль на мангале, айсберг, томаты черри, маслины, сыр Пармезан, сухарики, соус Цезарь",
+            "w": "200",
+            "p": 340,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/salad-caesar-c.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "salad-caesar-s",
+            "name": "Цезарь с гамбори",
+            "sub": "",
+            "d": "креветки в панировке, айсберг, томаты черри, маслины, сыр Пармезан, сухарики, соус Цезарь, лимон",
+            "w": "230",
+            "p": 450,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/salad-caesar-s.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "id": "zakuski",
+        "title": "Закуски",
+        "short": "Закуски",
+        "note": "",
+        "hidden": false,
+        "type": "cards",
+        "items": [
+          {
+            "id": "snack-trake",
+            "name": "Траке",
+            "sub": "куриные стрипсы",
+            "d": "",
+            "w": "100",
+            "p": 180,
+            "from": false,
+            "opts": [
+              {
+                "label": "3 шт",
+                "w": "100",
+                "p": 180,
+                "hot": false
+              },
+              {
+                "label": "5 шт",
+                "w": "150",
+                "p": 270,
+                "hot": false
+              }
+            ],
+            "img": "assets/img/dish/snack-trake.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "snack-gambori",
+            "name": "Гамбори в панировке",
+            "sub": "креветки",
+            "d": "",
+            "w": "80",
+            "p": 350,
+            "from": false,
+            "opts": [
+              {
+                "label": "5 шт",
+                "w": "80",
+                "p": 350,
+                "hot": false
+              },
+              {
+                "label": "9 шт",
+                "w": "140",
+                "p": 600,
+                "hot": false
+              }
+            ],
+            "img": "assets/img/dish/snack-gambori.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "snack-nuggets",
+            "name": "Наггетсы куриные 6 шт",
+            "sub": "",
+            "d": "",
+            "w": "100",
+            "p": 190,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/snack-nuggets.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "snack-fries",
+            "name": "Кромпир фри",
+            "sub": "",
+            "d": "",
+            "w": "100",
+            "p": 100,
+            "from": false,
+            "opts": [
+              {
+                "label": "",
+                "w": "100",
+                "p": 100,
+                "hot": false
+              },
+              {
+                "label": "",
+                "w": "150",
+                "p": 210,
+                "hot": false
+              }
+            ],
+            "img": "assets/img/dish/snack-fries.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "snack-krompir",
+            "name": "Кромпир 2 шт",
+            "sub": "",
+            "d": "",
+            "w": "100",
+            "p": 120,
+            "from": false,
+            "opts": [],
+            "img": "assets/img/dish/snack-krompir.webp",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "id": "pizza",
+        "title": "Пиццы",
+        "short": "Пиццы",
+        "note": "только на Спортивной",
+        "hidden": true,
+        "type": "cards",
+        "items": []
+      },
+      {
+        "id": "dobavki",
+        "title": "Добавь по вкусу",
+        "short": "Добавки",
+        "note": "",
+        "hidden": false,
+        "type": "list",
+        "items": [
+          {
+            "id": "dobavki-1",
+            "name": "Халапеньо",
+            "sub": "",
+            "d": "",
+            "w": "15",
+            "p": 20,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": true,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-2",
+            "name": "Колбаски чевапи 2 шт",
+            "sub": "",
+            "d": "",
+            "w": "80",
+            "p": 120,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-3",
+            "name": "Солёный огурец",
+            "sub": "",
+            "d": "",
+            "w": "30",
+            "p": 20,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-4",
+            "name": "Кромпир 1 шт",
+            "sub": "",
+            "d": "",
+            "w": "20",
+            "p": 50,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-5",
+            "name": "Соус: кисло-сладкий, кетчуп, сырный",
+            "sub": "",
+            "d": "",
+            "w": "25",
+            "p": 30,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-6",
+            "name": "Соус: красный, розовый, тар-тар",
+            "sub": "",
+            "d": "",
+            "w": "75",
+            "p": 55,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-7",
+            "name": "Лук фри",
+            "sub": "",
+            "d": "",
+            "w": "5",
+            "p": 10,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-8",
+            "name": "Сыр Чеддер 1 шт",
+            "sub": "",
+            "d": "",
+            "w": "12",
+            "p": 20,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-9",
+            "name": "Соус Супер Чили",
+            "sub": "",
+            "d": "",
+            "w": "3",
+            "p": 20,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": true,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-10",
+            "name": "Айвар",
+            "sub": "",
+            "d": "",
+            "w": "50",
+            "p": 50,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-11",
+            "name": "Соус чесночный",
+            "sub": "",
+            "d": "",
+            "w": "30",
+            "p": 40,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          },
+          {
+            "id": "dobavki-12",
+            "name": "Соус барбекю",
+            "sub": "",
+            "d": "",
+            "w": "25",
+            "p": 30,
+            "from": false,
+            "opts": [],
+            "img": "",
+            "hot": false,
+            "new": false,
+            "hidden": false
+          }
+        ]
+      }
+    ]
+  },
+  "showcase": [
+    {
+      "ref": "burger-govyadina",
+      "name": "Плескавица-бургер",
+      "sub": "из говядины",
+      "tag": "",
+      "hidden": false
+    },
+    {
+      "ref": "burger-spicy",
+      "name": "Плескавица спайси",
+      "sub": "свинина-говядина",
+      "tag": "",
+      "hidden": false
+    },
+    {
+      "ref": "chevapi-dog",
+      "name": "Чевапи-дог",
+      "sub": "колбаски чевапи",
+      "tag": "",
+      "hidden": false
+    },
+    {
+      "ref": "zav-chevapster",
+      "name": "Чевапстер",
+      "sub": "двойной чевапи",
+      "tag": "Двойной",
+      "hidden": false
+    },
+    {
+      "ref": "pita-plesk",
+      "name": "Плескавица в пите",
+      "sub": "балканская пита",
+      "tag": "",
+      "hidden": false
+    },
+    {
+      "ref": "lunch-chevapi",
+      "name": "Чевапи-ланч",
+      "sub": "гарнир на выбор",
+      "tag": "Ланч",
+      "hidden": false
+    },
+    {
+      "ref": "chorba-tomyam-s",
+      "name": "Том-ям",
+      "sub": "с гамбори",
+      "tag": "",
+      "hidden": false
+    },
+    {
+      "ref": "burger-piletina",
+      "name": "Пилетина-бургер",
+      "sub": "стейк из курицы",
+      "tag": "",
+      "hidden": false
+    }
+  ],
+  "marquee": {
+    "top": [
+      "Чевапи",
+      "Плескавица",
+      "Завертоны",
+      "Чорбы",
+      "Питы",
+      "На живом огне",
+      "Самара"
+    ],
+    "bottom": [
+      "Добро пожаловать",
+      "Чевапно место",
+      "Сербское бистро",
+      "Мясо, огонь и ничего лишнего"
+    ]
+  }
+}
