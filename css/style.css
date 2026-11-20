@@ -1374,9 +1374,8 @@ h1, h2, h3, .arkhip {
   .care__card--seal { grid-template-columns: minmax(0, 1fr); }
   .care__card--seal .seal { max-width: 360px; width: 100%; margin: 0 auto; }
   .panel__grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-  .mcard__d { display: none; }
-  /* Состав скрыт — цены выравниваем по низу карточки, чтобы ряд не «плясал» */
-  .mcard__nums { margin-top: auto; margin-bottom: 0; }
+  /* Состав на телефоне тоже показываем — мельче, под ценой */
+  .mcard__d { font-size: .74rem; line-height: 1.4; margin-top: .6em; }
   .marquee--tilt { transform: rotate(-3.4deg) scale(1.2); }
   .marquee-clip { padding: 46px 0; margin: -66px 0; }
   .hero__foot { flex-wrap: wrap; gap: 14px; }
